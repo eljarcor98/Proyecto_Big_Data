@@ -3,6 +3,8 @@
 Script generador del Cuaderno Oficial para el Caso de Estudio de Big Data (2026-II)
 Universidad Externado de Colombia - Maestría en Ciencia de Datos
 Incorpora:
+- Guía interactiva impresa en el notebook que indica qué buscar, qué valor saldrá y dónde verlo en Spark UI.
+- Extracción automática de operadores del plan físico (isFinalPlan, Exchange, Joins).
 - sc.setJobGroup("E#", "...") en cada celda para trazabilidad en Spark UI (patrón de Taller 6 y 7).
 - Impresión explícita de todas las métricas de la Hoja de Registro (Anexo A2) con su origen exacto.
 - Banners de evidencia destacados para cada captura (C1 a C11).
@@ -465,13 +467,53 @@ print("Transformación Compleja 2 definida exitosamente.")
 """))
 
     cells.append(nbf.v4.new_code_cell("""# CAPTURA C6: Salida del .explain() mostrando AdaptiveSparkPlan isFinalPlan=false
-print("=" * 80)
+print("=" * 85)
 print(" CAPTURA C6: PLAN DE EJECUCIÓN FÍSICO INICIAL (AQE isFinalPlan=false)")
-print("=" * 80)
+print("=" * 85)
 df_enriquecido.explain(mode="formatted")
-print("=" * 80)
+print("=" * 85)
 print(">>> TOME LA CAPTURA C6 DE ESTA CELDA COMPLETA (incluyendo código y salida)")
-print(">>> Busque la línea 'AdaptiveSparkPlan isFinalPlan=false' en la cabecera.")
+print(">>> Busque la línea 'AdaptiveSparkPlan isFinalPlan=false' en la cabecera.\\n")
+
+# ==============================================================================
+# 🔍 GUÍA DETALLADA: QUÉ VALOR DEBES VER, DÓNDE BUSCARLO Y QUÉ ANOTAR EN LA HOJA
+# ==============================================================================
+print("=" * 85)
+print("📋 GUÍA EXACTA PARA DILIGENCIAR LAS FILAS DEL PLAN DE EJECUCIÓN (ANEXO A2):")
+print("=" * 85)
+print("1. Estrategia de Join en el plan inicial y en el plan final:")
+print("   • En el PLAN INICIAL (aquí en la salida de .explain() de arriba - Captura C6):")
+print("     - QUÉ BUSCAR : El operador que une df con df_regiones.")
+print("     - VALOR REAL : BroadcastHashJoin [estado#...], [estado_codigo#...], LeftOuter, BuildRight")
+print("     - POR QUÉ    : df_regiones tiene 51 filas (< 10 MB); Catalyst difunde la tabla pequeña.")
+print("   • En el PLAN FINAL (en Spark UI -> pestaña 'SQL / DataFrame' -> consulta E4b - Captura C7):")
+print("     - DÓNDE VERLO: Spark UI (puerto 4040) -> pestaña SQL -> Clic en 'toPandas at ... (E4b)' -> Details")
+print("     - VALOR REAL : BroadcastHashJoin [estado#...], [estado_codigo#...]")
+print("     - POR QUÉ    : AQE confirmó en tiempo de ejecución que el tamaño real es pequeño y mantuvo el Broadcast.")
+print("-" * 85)
+print("2. Nodos Exchange del plan inicial y tipo de cada uno (en salida .explain() C6):")
+print("   - NODO 1: Exchange hashpartitioning(macro_region, producto, 200) -> Tipo: 'hashpartitioning' (Shuffle para groupBy)")
+print("   - NODO 2: BroadcastExchange HashedRelationBroadcastMode(...)      -> Tipo: 'BroadcastExchange' (Difusión de la tabla)")
+print("-" * 85)
+print("3. Valor de isFinalPlan (Captura C6 vs Captura C7):")
+print("   - En el Notebook (.explain() - Captura C6) : isFinalPlan=false")
+print("   - En la Spark UI (SQL Details - Captura C7): isFinalPlan=true")
+print("=" * 85)
+
+# Intentar extraer dinámicamente los operadores exactos de esta sesión
+try:
+    plan_str = df_enriquecido._jdf.queryExecution().executedPlan().toString()
+    exchanges_encontrados = [line.strip() for line in plan_str.split("\\n") if "Exchange" in line]
+    joins_encontrados = [line.strip() for line in plan_str.split("\\n") if "Join" in line]
+    
+    print("\\n>>> VALORES EXTRAÍDOS DIRECTAMENTE DE TU EJECUCIÓN ACTUAL:")
+    if joins_encontrados:
+        print(f" -> Join detectado en plan inicial   : {joins_encontrados[0]}")
+    if exchanges_encontrados:
+        for idx, ex in enumerate(exchanges_encontrados, 1):
+            print(f" -> Nodo Exchange {idx} detectado       : {ex}")
+except Exception as e:
+    pass
 
 # Guardar notas de plan para los anexos
 REGISTRO_ANEXOS["nodos_exchange"] = "Exchange hashpartitioning(macro_region, producto, 200) y BroadcastExchange (tabla regiones)"
