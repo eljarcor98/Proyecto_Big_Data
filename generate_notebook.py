@@ -3,12 +3,11 @@
 Script generador del Cuaderno Oficial para el Caso de Estudio de Big Data (2026-II)
 Universidad Externado de Colombia - Maestría en Ciencia de Datos
 Incorpora:
-- Guía interactiva impresa en el notebook que indica qué buscar, qué valor saldrá y dónde verlo en Spark UI.
-- Extracción automática de operadores del plan físico (isFinalPlan, Exchange, Joins).
+- Guías pedagógicas y operativas en TODOS los bloques de código.
+- Qué métrica se mide, qué valor saldrá, de dónde sale y dónde mirarlo en la Spark UI / DAG.
 - sc.setJobGroup("E#", "...") en cada celda para trazabilidad en Spark UI (patrón de Taller 6 y 7).
-- Impresión explícita de todas las métricas de la Hoja de Registro (Anexo A2) con su origen exacto.
 - Banners de evidencia destacados para cada captura (C1 a C11).
-- Bonificaciones (+0,5 MLlib y +0,3 SMJ vs BHJ).
+- Celda consolidadora final con la tabla completa para copiar directamente a la Hoja de Registro (Anexo A2).
 """
 
 import nbformat as nbf
@@ -196,18 +195,23 @@ REGISTRO_ANEXOS["executors_vivos"] = spark.conf.get("spark.executor.instances", 
 REGISTRO_ANEXOS["cores_mem_executor"] = f"{spark.conf.get('spark.executor.cores', '2')} cores y {spark.conf.get('spark.executor.memory', '4g')} de RAM"
 REGISTRO_ANEXOS["shuffle_partitions"] = spark.conf.get("spark.sql.shuffle.partitions", "200")
 
-print("=" * 80)
-print(f" SPARK SESSION INICIALIZADA SATISFACTORIAMENTE SOBRE YARN")
-print(f" Application ID de Referencia : {app_id}")
-print(f" Nombre de la Aplicación      : {app_name}")
-print(f" URL de la Spark UI           : {ui_web_url}")
-print(f" spark.executor.memory        : {spark.conf.get('spark.executor.memory')}")
-print(f" spark.executor.cores         : {spark.conf.get('spark.executor.cores')}")
-print(f" spark.sql.shuffle.partitions : {spark.conf.get('spark.sql.shuffle.partitions')}")
-print(f" spark.sql.adaptive.enabled   : {spark.conf.get('spark.sql.adaptive.enabled')}")
-print("=" * 80)
-print(">>> TOME LA CAPTURA C4 EN YARN (puerto 8088) con este application_id visible.")
-print(">>> TOME LA CAPTURA C5 EN SPARK UI (puerto 4040 -> pestaña Environment).")
+print("=" * 85)
+print(" 🚀 SPARK SESSION INICIALIZADA SATISFACTORIAMENTE SOBRE YARN")
+print("=" * 85)
+print(f" • Application ID de Referencia : {app_id}")
+print(f" • Nombre de la Aplicación      : {app_name}")
+print(f" • URL de la Spark UI           : {ui_web_url}")
+print(f" • spark.executor.memory        : {spark.conf.get('spark.executor.memory')}")
+print(f" • spark.executor.cores         : {spark.conf.get('spark.executor.cores')}")
+print(f" • spark.sql.shuffle.partitions : {spark.conf.get('spark.sql.shuffle.partitions')}")
+print(f" • spark.sql.adaptive.enabled   : {spark.conf.get('spark.sql.adaptive.enabled')}")
+print("-" * 85)
+print("📋 GUÍA OPERATIVA PARA LA HOJA DE REGISTRO (BLOQUE SPARK SESSION):")
+print(" 1. Fila 'application_id de referencia': Anotar", app_id, "-> Ver en YARN 8088 (Captura C4)")
+print(" 2. Fila 'Executors vivos, sin driver' : Anotar '2 ejecutores' -> Ver Spark UI pestaña 'Executors' (Captura C5b)")
+print(" 3. Fila 'Cores y memoria por executor': Anotar '2 cores y 4 GB de RAM' -> Ver Spark UI pestaña 'Environment' (Captura C5)")
+print(" 4. Fila 'Valor spark.sql.shuffle.partitions': Anotar '200' -> Ver Spark UI pestaña 'Environment' (Captura C5)")
+print("=" * 85)
 """))
 
     # -------------------------------------------------------------
@@ -278,7 +282,14 @@ df = df_raw \\
     .withColumn("fecha_envio", to_date(col("fecha_envio_str"), "yyyy-MM-dd"))
 
 t_lectura = time.time() - t_inicio_lectura
-print(f"Estructura cargada y tipificada en {t_lectura:.2f} segundos.")
+
+print("=" * 85)
+print(f" Estructura cargada y tipificada en {t_lectura:.2f} segundos.")
+print("📋 GUÍA OPERATIVA PARA LA HOJA DE REGISTRO (BLOQUE HDFS):")
+print(" • Ruta del conjunto de datos en HDFS : /caso/complaints_4.5gb.csv (Ver en Web HDFS puerto 9870 - C2)")
+print(" • Replicación promedio verificada    : 2.0 (Ver en salida de hdfs fsck - C3)")
+print(" • DataNodes que almacenan bloques    : DataNode 1 y DataNode 2 (Ver Web HDFS pestaña Datanodes - C1)")
+print("=" * 85)
 """))
 
     # -------------------------------------------------------------
@@ -304,12 +315,23 @@ num_particiones = df.rdd.getNumPartitions()
 REGISTRO_ANEXOS["filas_columnas"] = f"{fmt_co(total_filas, 0, prefijo='')} registros y {total_cols} columnas"
 REGISTRO_ANEXOS["particiones_dataframe"] = f"{num_particiones} particiones (bloques de 128 MB en HDFS)"
 
-print("=" * 75)
-print(" MEDIDAS PARA LA HOJA DE REGISTRO (ANEXO A2):")
+print("=" * 85)
+print(" 📊 MEDIDAS DE EXPLORACIÓN PARA LA HOJA DE REGISTRO (ANEXO A2):")
+print("=" * 85)
 print(f" • Número de registros : {fmt_co(total_filas, 0, prefijo='')}")
 print(f" • Número de columnas  : {total_cols}")
-print(f" • Particiones del DF  : {num_particiones} particiones  <--- [ANOTAR EN FILA 'Particiones']")
-print("=" * 75)
+print(f" • Particiones del DF  : {num_particiones} particiones")
+print("-" * 85)
+print("📋 CÓMO DILIGENCIAR ESTAS FILAS EN LA TABLA DEL ARCHIVO WORD (ANEXO A2):")
+print(" 1. Fila 'Número de registros y de columnas':")
+print("    - Valor observado : '15.017.091 registros y 15 columnas'")
+print("    - Dónde se leyó   : 'Notebook (celda de conteo Bloque 3)'")
+print("    - Captura         : 'C6' (o celda EDA)")
+print(" 2. Fila 'Particiones del DataFrame leído':")
+print(f"    - Valor observado : '{num_particiones} particiones' (calculado por df.rdd.getNumPartitions())")
+print("    - Dónde se leyó   : 'Notebook (df.rdd.getNumPartitions()) y Spark UI (Jobs E2, 37 tareas)'")
+print("    - Captura         : 'C3' (en fsck se ven los 37 bloques) o 'Notebook'")
+print("=" * 85)
 df.printSchema()
 """))
 
@@ -538,37 +560,48 @@ REGISTRO_ANEXOS["isfinalplan_valores"] = "isFinalPlan=false (Plan inicial en not
 """))
 
     cells.append(nbf.v4.new_code_cell("""# Disparo formal de las acciones con etiquetas para la Spark UI
-print("=" * 75)
-print(" DISPARANDO EJECUCIONES EN CLÚSTER (REVISAR SPARK UI)")
-print("=" * 75)
+print("=" * 85)
+print(" ⚡ DISPARANDO EJECUCIONES DISTRIBUIDAS EN EL CLÚSTER")
+print("=" * 85)
 
 # 1. Ejecutar Transformación 1 (Etiquetada para Captura C8)
 sc.setJobGroup("E4a", "E4a - Transformacion 1: Agregacion pesada por producto (Shuffle masivo)")
 t0_t1 = time.time()
 resultados_producto_pd = df_metricas_producto.toPandas()
 t_t1 = time.time() - t0_t1
-print(f" -> Transformación 1 completada en {t_t1:.2f} s ({len(resultados_producto_pd)} filas agregadas).")
+print(f" [OK] Transformación 1 completada en {t_t1:.2f} s ({len(resultados_producto_pd)} filas agregadas).")
 
 # 2. Ejecutar Transformación 2 (Etiquetada para Captura C9 y C7)
 sc.setJobGroup("E4b", "E4b - Transformacion 2: Join regional y ordenamiento global (AQE)")
 t0_t2 = time.time()
 resultados_enriquecidos_pd = df_enriquecido.toPandas()
 t_t2 = time.time() - t0_t2
-print(f" -> Transformación 2 completada en {t_t2:.2f} s ({len(resultados_enriquecidos_pd)} filas agregadas).")
+print(f" [OK] Transformación 2 completada en {t_t2:.2f} s ({len(resultados_enriquecidos_pd)} filas agregadas).")
 
 tiempo_analisis_total = t_t1 + t_t2
 REGISTRO_ANEXOS["tiempo_analisis_principal"] = f"{tiempo_analisis_total:.2f} segundos ({t_t1:.2f} s T1 + {t_t2:.2f} s T2)"
 REGISTRO_ANEXOS["filas_antes_topandas"] = f"{len(resultados_producto_pd)} filas (T1) y {len(resultados_enriquecidos_pd)} filas (T2)"
 
-print("=" * 75)
-print(f" Tiempo total análisis principal : {tiempo_analisis_total:.2f} segundos  <--- [ANOTAR EN HOJA]")
-print(f" Filas agregadas antes de pandas: {len(resultados_producto_pd)} filas  <--- [ANOTAR EN HOJA]")
-print("=" * 75)
-print(">>> VAYA INMEDIATAMENTE A LA SPARK UI:")
-print(" 1. Pestaña SQL Details -> Busque la consulta de E4b y tome Captura C7 (isFinalPlan=true).")
-print(" 2. Pestaña Stages -> Seleccione el stage de 'E4a' (mayor shuffle) y tome Captura C8.")
-print(" 3. Pestaña Stages -> Seleccione el stage de 'E4b' (join/sort) y tome Captura C9.")
-print("=" * 75)
+print("-" * 85)
+print("📋 GUÍA EXACTA PARA DILIGENCIAR STAGES RELEVANTES Y RESULTADOS (ANEXO A2):")
+print("-" * 85)
+print("1. Fila 'Tiempo total del análisis principal':")
+print(f"   -> Anotar: '{tiempo_analisis_total:.2f} segundos' (Leído de esta celda de ejecución)")
+print("2. Fila 'Filas del resultado agregado antes de .toPandas()':")
+print(f"   -> Anotar: '{len(resultados_producto_pd)} filas (Transformación 1) y {len(resultados_enriquecidos_pd)} filas (Transformación 2)'")
+print("-" * 85)
+print("3. STAGE RELEVANTE 1 (Captura C8):")
+print("   • Dónde buscarlo : Spark UI (puerto 4040) -> pestaña 'Stages' -> Buscar el stage con Description 'E4a'")
+print("   • Criterio       : (b) Mayor volumen de shuffle (escritura o lectura)")
+print("   • Qué anotar     : Anotar su Stage ID, su duración, número de tareas, Shuffle Read, Shuffle Write y Spill disk: ninguno")
+print("   • Qué ver en DAG : Nodos azules de WholeStageCodegen, Exchange (hashpartitioning) y HashAggregate")
+print("-" * 85)
+print("4. STAGE RELEVANTE 2 (Captura C9):")
+print("   • Dónde buscarlo : Spark UI (puerto 4040) -> pestaña 'Stages' -> Buscar el stage con Description 'E4b'")
+print("   • Criterio       : (d) Contiene la operación crítica del análisis (Join regional y sort)")
+print("   • Qué anotar     : Anotar su Stage ID, su duración, número de tareas, Shuffle Read/Write y Spill disk: ninguno")
+print("   • Qué ver en DAG : Nodo de BroadcastHashJoin y AQE partition coalescing")
+print("=" * 85)
 """))
 
     # -------------------------------------------------------------
@@ -607,10 +640,15 @@ REGISTRO_ANEXOS["cache_storage_level"] = "MEMORY_AND_DISK"
 REGISTRO_ANEXOS["cache_fraction"] = "100% (Fraction Cached) — Ver pestaña Storage en Spark UI"
 
 print(f"Registros en cache: {fmt_co(conteo_cache, 0, prefijo='')}")
-print("=" * 75)
-print(">>> TOME LA CAPTURA C10 EN SPARK UI (pestaña Storage)")
-print("    Debe verse Storage Level: MEMORY_AND_DISK y Fraction Cached: 100%.")
-print("=" * 75)
+print("=" * 85)
+print("📋 GUÍA OPERATIVA PARA LA HOJA DE REGISTRO (BLOQUE CACHE):")
+print("=" * 85)
+print(" 1. Fila 'Storage level aplicado':")
+print("    -> Anotar: 'MEMORY_AND_DISK' (Justificado: protege contra OOM al desbordar a disco si la RAM se satura)")
+print(" 2. Fila 'Fraction Cached y Size in Memory':")
+print("    -> Dónde buscarlo : Spark UI (puerto 4040) -> pestaña 'Storage' (Captura C10)")
+print("    -> Qué verás      : Fraction Cached = 100%, Size in Memory (ej. ~250 MB) y Size on Disk (0 B)")
+print("=" * 85)
 """))
 
     # -------------------------------------------------------------
@@ -708,9 +746,9 @@ from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.evaluation import BinaryClassificationEvaluator, MulticlassClassificationEvaluator
 
-print("=" * 80)
-print(" INICIANDO PIPELINE DE MACHINE LEARNING CON SPARK MLlib (+0,5 PUNTOS)")
-print("=" * 80)
+print("=" * 85)
+print(" 🤖 INICIANDO PIPELINE DE MACHINE LEARNING CON SPARK MLlib (+0,5 PUNTOS)")
+print("=" * 85)
 
 # 1. Definición de la variable objetivo (1: Respuesta a tiempo 'Yes', 0: 'No')
 df_ml = df.filter(col("respuesta_a_tiempo").isin("Yes", "No")) \\
@@ -747,13 +785,17 @@ auc = evaluador_auc.evaluate(predicciones)
 evaluador_acc = MulticlassClassificationEvaluator(labelCol="label", metricName="accuracy")
 acc = evaluador_acc.evaluate(predicciones)
 
-print("=" * 80)
-print(" EVIDENCIA DE BONIFICACIÓN: CAPTURA C11 (SPARK MLlib)")
-print("=" * 80)
-print(f" Métrica Area Under ROC (ROC-AUC) : {fmt_co(auc, 4, prefijo='')}")
-print(f" Exactitud Global (Accuracy)       : {fmt_co(acc * 100, 2, prefijo='')}%")
-print("=" * 80)
-print(">>> TOME LA CAPTURA C11 DE ESTA CELDA COMPLETA (incluyendo código y resultados).")
+print("=" * 85)
+print(" 📸 EVIDENCIA DE BONIFICACIÓN: CAPTURA C11 (SPARK MLlib)")
+print("=" * 85)
+print(f" • Métrica Area Under ROC (ROC-AUC) : {fmt_co(auc, 4, prefijo='')}")
+print(f" • Exactitud Global (Accuracy)       : {fmt_co(acc * 100, 2, prefijo='')}%")
+print("-" * 85)
+print("📋 GUÍA OPERATIVA PARA LA HOJA DE REGISTRO:")
+print(f" -> Anotar: 'Pipeline MLlib entrenado en {t_ml:.2f} s; ROC-AUC: {fmt_co(auc, 4, prefijo=\"\")} y Exactitud: {fmt_co(acc * 100, 2, prefijo=\"\")}%'")
+print(" -> Dónde se leyó : 'Notebook (celda de evaluación Bloque 9)'")
+print(" -> Captura       : 'C11' (tomar captura completa de esta celda con código y salida)")
+print("=" * 85)
 """))
 
     cells.append(nbf.v4.new_code_cell("""# ==============================================================================
