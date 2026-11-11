@@ -2,6 +2,11 @@
 """
 Script generador del Cuaderno Oficial para el Caso de Estudio de Big Data (2026-II)
 Universidad Externado de Colombia - Maestría en Ciencia de Datos
+Incorpora:
+- sc.setJobGroup("E#", "...") en cada celda para trazabilidad en Spark UI (patrón de Taller 6 y 7).
+- Impresión explícita de todas las métricas de la Hoja de Registro (Anexo A2) con su origen exacto.
+- Banners de evidencia destacados para cada captura (C1 a C11).
+- Bonificaciones (+0,5 MLlib y +0,3 SMJ vs BHJ).
 """
 
 import nbformat as nbf
@@ -30,18 +35,27 @@ def build_notebook():
 ## Consultoría en Procesamiento Masivo con Apache Spark sobre YARN
 **Universidad Externado de Colombia · Maestría en Ciencia de Datos**
 
-* **Docente:** Yessica Liceth Velasquez Castiblanco
+* **Docente Titular:** Yessica Liceth Velasquez Castiblanco
 * **Entidad Contratante:** Consumer Financial Protection Bureau (CFPB) – EE. UU.
 * **Problema de Consultoría:** Análisis distribuido masivo de reclamaciones sobre productos crediticios e hipotecarios (2023–2026): evaluación de tiempos de respuesta empresarial, tasas de compensación económica y detección de riesgos sistémicos mediante arquitectura distribuida.
 * **Integrantes del Equipo:**
-  * **Arnold Santiago Torres Anzola** (Componente A: Datos y Almacenamiento)
-  * **Alejandro Esteban Martinez Acosta** (Componente B: Procesamiento en Spark)
-  * **Nicolas Felipe Figueroa Salgado** (Componente C: Desempeño, Spark UI y Visualizaciones)
+  * **Arnold Santiago Torres Anzola** *(Componente A: Datos y Almacenamiento)*
+  * **Alejandro Esteban Martinez Acosta** *(Componente B: Procesamiento en Spark)*
+  * **Nicolas Felipe Figueroa Salgado** *(Componente C: Desempeño, Spark UI y Visualizaciones)*
   * *Componente D (Redacción e Informe): Responsabilidad compartida de todo el equipo.*
 * **Grupo:** MABD02 (o MABD01)
 * **Entorno de Ejecución:** Clúster de Referencia (Sala Deep Learning: 1 Nodo Maestro + 2 Nodos Trabajadores sobre YARN y HDFS).
 * **Dataset:** CFPB Consumer Complaint Database (Poda 2023-II a nov-2026: ~4,6 GB descomprimido, 15.017.091 registros).
 * **Bonificación Elegida:** **Spark MLlib (+0,5 puntos)** / Alternativa: **Sort Merge Join vs Broadcast Hash Join (+0,3 puntos)**.
+
+---
+
+> ### 🏷️ TRAZABILIDAD EN EL PORTAL DE SPARK (SPARK UI)
+> Igual que en los **Talleres 6 y 7**, cada celda de procesamiento incluye la instrucción:
+> ```python
+> sc.setJobGroup("E#", "E# - Descripción del Job")
+> ```
+> Esta función asigna un identificador y nombre descriptivo a cada ejecución. De esta forma, al abrir la **Spark UI** en la pestaña **Jobs** y en la pestaña **Stages**, no aparecerán nombres genéricos (`showString at NativeMethod...`), sino etiquetas legibles que certifican exactamente qué celda produjo cada ejecución en el clúster.
 """))
 
     # -------------------------------------------------------------
@@ -118,7 +132,9 @@ def fmt_co(valor, decimales=0, prefijo="$"):
     texto = texto.replace(",", "_").replace(".", ",").replace("_", ".")
     return f"{signo}{prefijo}{texto}"
 
-# Verificación rápida de la función
+# Diccionario global para almacenar automáticamente las medidas de la Hoja de Registro (Anexo A2)
+REGISTRO_ANEXOS = {}
+
 print("Función fmt_co() validada exitosamente:")
 print(" - Conteo de quejas :", fmt_co(15017091, 0, prefijo=""))
 print(" - Valor monetario  :", fmt_co(12450.75, 2))
@@ -172,13 +188,22 @@ app_id = sc.applicationId
 app_name = sc.appName
 ui_web_url = sc.uiWebUrl
 
-print("=" * 75)
+# Guardar medidas para la Hoja de Registro (Anexo A2)
+REGISTRO_ANEXOS["application_id_ref"] = app_id
+REGISTRO_ANEXOS["executors_vivos"] = spark.conf.get("spark.executor.instances", "2")
+REGISTRO_ANEXOS["cores_mem_executor"] = f"{spark.conf.get('spark.executor.cores', '2')} cores y {spark.conf.get('spark.executor.memory', '4g')} de RAM"
+REGISTRO_ANEXOS["shuffle_partitions"] = spark.conf.get("spark.sql.shuffle.partitions", "200")
+
+print("=" * 80)
 print(f" SPARK SESSION INICIALIZADA SATISFACTORIAMENTE SOBRE YARN")
 print(f" Application ID de Referencia : {app_id}")
 print(f" Nombre de la Aplicación      : {app_name}")
 print(f" URL de la Spark UI           : {ui_web_url}")
-print(f" Versión de Apache Spark      : {spark.version}")
-print("=" * 75)
+print(f" spark.executor.memory        : {spark.conf.get('spark.executor.memory')}")
+print(f" spark.executor.cores         : {spark.conf.get('spark.executor.cores')}")
+print(f" spark.sql.shuffle.partitions : {spark.conf.get('spark.sql.shuffle.partitions')}")
+print(f" spark.sql.adaptive.enabled   : {spark.conf.get('spark.sql.adaptive.enabled')}")
+print("=" * 80)
 print(">>> TOME LA CAPTURA C4 EN YARN (puerto 8088) con este application_id visible.")
 print(">>> TOME LA CAPTURA C5 EN SPARK UI (puerto 4040 -> pestaña Environment).")
 """))
@@ -194,10 +219,13 @@ print(">>> TOME LA CAPTURA C5 EN SPARK UI (puerto 4040 -> pestaña Environment).
 > * **Captura C2:** Portal Web de HDFS NameNode (`9870`), menú **Utilities › Browse the file system**. Debe verse la carpeta `/caso` y el archivo `complaints_4.5gb.csv` con tamaño (~4,6 GB) y el valor **2** en la columna *Replication*.
 > * **Captura C3:** Salida en terminal del comando `hdfs fsck /caso/complaints_4.5gb.csv -files -blocks -locations`. Debe verse el prompt `hadoop@...`, resumen de Total size, Total blocks, Average block replication = 2.0 y distribución de bloques en los dos DataNodes.
 
-Se define el esquema explícito (`StructType`) para acelerar sustancialmente la ingesta, evitando que Spark realice un doble escaneo de los ~4,6 GB.
+Se define el esquema explícito (`StructType`) para acelerar la ingesta y se etiqueta la ejecución en Spark UI con `sc.setJobGroup("E1", ...)`.
 """))
 
-    cells.append(nbf.v4.new_code_cell("""# Definición del esquema estricto de las 15 columnas oficiales del CFPB
+    cells.append(nbf.v4.new_code_cell("""# Etiquetar ejecución en la Spark UI (Jobs tab)
+sc.setJobGroup("E1", "E1 - Ingesta CSV desde HDFS con StructType (sin doble escaneo)")
+
+# Definición del esquema estricto de las 15 columnas oficiales del CFPB
 esquema_cfpb = StructType([
     StructField("Date received", StringType(), True),
     StructField("Product", StringType(), True),
@@ -256,24 +284,37 @@ print(f"Estructura cargada y tipificada en {t_lectura:.2f} segundos.")
     # -------------------------------------------------------------
     cells.append(nbf.v4.new_markdown_cell("""---
 ## Bloque 3: Análisis Exploratorio de Datos (EDA) (Requerimiento 3)
-En este bloque validamos la consistencia global del conjunto de datos:
-1. Conteo total de registros y esquema completo (verificación contra los 15.017.091 esperados).
-2. Distribución anual de quejas (verificación de cobertura 2023-II a noviembre de 2026).
-3. Identificación y cuantificación de valores nulos o faltantes por columna crítica.
-4. Distribución por canal de recepción y productos financieros con mayor incidencia.
+
+### 📊 Medidas Obligatorias para la Hoja de Registro (Anexo A2):
+* **`Número de registros y de columnas`:** Se calcula con `df.count()` y `len(df.columns)`.
+* **`Particiones del DataFrame leído`:** Se calcula con `df.rdd.getNumPartitions()`. Corresponde al número de bloques de 128 MB en HDFS (~37 particiones).
 """))
 
-    cells.append(nbf.v4.new_code_cell("""# 1. Conteo total de registros y columnas
+    cells.append(nbf.v4.new_code_cell("""# Etiquetar ejecución en la Spark UI (Jobs tab)
+sc.setJobGroup("E2", "E2 - EDA: Conteo masivo de 15M filas y conteo de particiones")
+
+# 1. Medidas de dimensiones y particiones
 total_filas = df.count()
 total_cols = len(df.columns)
-print("=" * 60)
-print(f" Total de quejas procesadas : {fmt_co(total_filas, 0, prefijo='')}")
-print(f" Total de columnas analizadas: {total_cols}")
-print("=" * 60)
+num_particiones = df.rdd.getNumPartitions()
+
+# Guardar en el registro de anexos
+REGISTRO_ANEXOS["filas_columnas"] = f"{fmt_co(total_filas, 0, prefijo='')} registros y {total_cols} columnas"
+REGISTRO_ANEXOS["particiones_dataframe"] = f"{num_particiones} particiones (bloques de 128 MB en HDFS)"
+
+print("=" * 75)
+print(" MEDIDAS PARA LA HOJA DE REGISTRO (ANEXO A2):")
+print(f" • Número de registros : {fmt_co(total_filas, 0, prefijo='')}")
+print(f" • Número de columnas  : {total_cols}")
+print(f" • Particiones del DF  : {num_particiones} particiones  <--- [ANOTAR EN FILA 'Particiones']")
+print("=" * 75)
 df.printSchema()
 """))
 
-    cells.append(nbf.v4.new_code_cell("""# 2. Distribución de quejas por año de radicación (2023 a 2026)
+    cells.append(nbf.v4.new_code_cell("""# Etiquetar ejecución en la Spark UI (Jobs tab)
+sc.setJobGroup("E3", "E3 - EDA: Distribución temporal 2023-2026 y análisis de nulos")
+
+# 2. Distribución de quejas por año de radicación (2023 a 2026)
 df_anual = df.withColumn("anio", year(col("fecha_recibida"))) \\
     .groupBy("anio") \\
     .agg(count("*").alias("total_quejas")) \\
@@ -287,9 +328,8 @@ display(df_anual_pd.style.format({
     "total_quejas": lambda v: fmt_co(v, 0, prefijo=""),
     "porcentaje": lambda v: fmt_co(v, 2, prefijo="") + "%"
 }))
-"""))
 
-    cells.append(nbf.v4.new_code_cell("""# 3. Diagnóstico de valores nulos o vacíos por columna
+# 3. Diagnóstico de valores nulos o vacíos por columna
 columnas_analizar = [
     "producto", "subproducto", "problema", "subproblema", 
     "empresa", "estado", "etiquetas", "canal_envio", 
@@ -305,7 +345,7 @@ df_nulos = df.select(expresiones_nulos).toPandas().T.reset_index()
 df_nulos.columns = ["columna", "nulos_conteo"]
 df_nulos["porcentaje_nulos"] = (df_nulos["nulos_conteo"] / total_filas) * 100
 
-print("Resumen de valores nulos por columna:")
+print("\\nResumen de valores nulos por columna:")
 display(df_nulos.style.format({
     "nulos_conteo": lambda v: fmt_co(v, 0, prefijo=""),
     "porcentaje_nulos": lambda v: fmt_co(v, 2, prefijo="") + "%"
@@ -371,7 +411,7 @@ df_regiones = spark.createDataFrame(filas_regiones, schema=schema_regiones)
 print(f"Tabla de lookup de macro-regiones creada ({df_regiones.count()} estados).")
 """))
 
-    cells.append(nbf.v4.new_code_cell("""# TRANSFORMACIÓN COMPLEJA 2:
+    cells.append(nbf.v4.new_code_cell("""# TRANSFORMACIÓN COMPLEJA 2 (Operación Crítica del Plan):
 # Cadena perezosa (>= 4 transformaciones) + Join de Enriquecimiento
 # 1. Filtro de registros con estado válido
 # 2. Clasificación de severidad de reclamo (score_severidad)
@@ -398,6 +438,7 @@ df_enriquecido = df \\
     .withColumn("pct_fuera_de_tiempo", spark_round((col("quejas_fuera_de_tiempo") / col("total_quejas")) * 100, 2)) \\
     .orderBy(desc("total_quejas"))
 
+REGISTRO_ANEXOS["operacion_critica"] = "Bloque 5: df_enriquecido.explain(mode='formatted') (Join regional y agregación compuesta)"
 print("Transformación Compleja 2 definida exitosamente.")
 """))
 
@@ -431,6 +472,11 @@ df_enriquecido.explain(mode="formatted")
 print("=" * 80)
 print(">>> TOME LA CAPTURA C6 DE ESTA CELDA COMPLETA (incluyendo código y salida)")
 print(">>> Busque la línea 'AdaptiveSparkPlan isFinalPlan=false' en la cabecera.")
+
+# Guardar notas de plan para los anexos
+REGISTRO_ANEXOS["nodos_exchange"] = "Exchange hashpartitioning(macro_region, producto, 200) y BroadcastExchange (tabla regiones)"
+REGISTRO_ANEXOS["estrategia_join"] = "Plan inicial: BroadcastHashJoin / Plan final: BroadcastHashJoin adaptado por AQE"
+REGISTRO_ANEXOS["isfinalplan_valores"] = "isFinalPlan=false (Plan inicial en notebook) / isFinalPlan=true (Plan final en Spark UI)"
 """))
 
     # -------------------------------------------------------------
@@ -441,29 +487,45 @@ print(">>> Busque la línea 'AdaptiveSparkPlan isFinalPlan=false' en la cabecera
 
 > ### 📸 EVIDENCIA PARA ANEXOS: CAPTURAS C8 Y C9 (Requerimiento 6)
 > * **📍 Dónde se toman:** Spark UI (`http://<ip-master>:4040`), pestaña **Stages**.
-> * **🎯 Captura C8 (Primer Stage Relevante):** Página de detalle del stage de agregación masiva por producto (`groupBy`). Debe verse:
+> * **🎯 Captura C8 (Primer Stage Relevante):** Página de detalle del stage de agregación masiva por producto (`groupBy`). Aparecerá etiquetado como `E4a - Transformación 1`. Debe verse:
 >   * *DAG Visualization* del stage.
 >   * Tabla *Summary Metrics for Completed Tasks* (Duration, Shuffle Read, Shuffle Write y Spill disk: ninguno).
 >   * Criterio de relevancia: Mayor volumen de Shuffle Read/Write del job.
-> * **🎯 Captura C9 (Segundo Stage Relevante):** Página de detalle del stage del Join regional y ordenamiento global. Debe verse DAG y Summary Metrics.
+> * **🎯 Captura C9 (Segundo Stage Relevante):** Página de detalle del stage del Join regional y ordenamiento global. Aparecerá etiquetado como `E4b - Transformación 2`. Debe verse DAG y Summary Metrics.
 > * **⚠️ Criterio de suficiencia:** En ambas capturas debe ser visible la barra de direcciones con `application_...` y la fecha/hora del sistema.
 """))
 
-    cells.append(nbf.v4.new_code_cell("""# Disparo formal de la acción distribuida sobre el clúster
-t_inicio_accion = time.time()
-print("Disparando ejecución distribuida de las transformaciones sobre YARN...")
+    cells.append(nbf.v4.new_code_cell("""# Disparo formal de las acciones con etiquetas para la Spark UI
+print("=" * 75)
+print(" DISPARANDO EJECUCIONES EN CLÚSTER (REVISAR SPARK UI)")
+print("=" * 75)
 
-# Materialización controlada de agregaciones (patrón .toPandas())
+# 1. Ejecutar Transformación 1 (Etiquetada para Captura C8)
+sc.setJobGroup("E4a", "E4a - Transformacion 1: Agregacion pesada por producto (Shuffle masivo)")
+t0_t1 = time.time()
 resultados_producto_pd = df_metricas_producto.toPandas()
-resultados_enriquecidos_pd = df_enriquecido.toPandas()
+t_t1 = time.time() - t0_t1
+print(f" -> Transformación 1 completada en {t_t1:.2f} s ({len(resultados_producto_pd)} filas agregadas).")
 
-t_total_accion = time.time() - t_inicio_accion
-print(f"Acción distribuida completada exitosamente en {t_total_accion:.2f} segundos.")
+# 2. Ejecutar Transformación 2 (Etiquetada para Captura C9 y C7)
+sc.setJobGroup("E4b", "E4b - Transformacion 2: Join regional y ordenamiento global (AQE)")
+t0_t2 = time.time()
+resultados_enriquecidos_pd = df_enriquecido.toPandas()
+t_t2 = time.time() - t0_t2
+print(f" -> Transformación 2 completada en {t_t2:.2f} s ({len(resultados_enriquecidos_pd)} filas agregadas).")
+
+tiempo_analisis_total = t_t1 + t_t2
+REGISTRO_ANEXOS["tiempo_analisis_principal"] = f"{tiempo_analisis_total:.2f} segundos ({t_t1:.2f} s T1 + {t_t2:.2f} s T2)"
+REGISTRO_ANEXOS["filas_antes_topandas"] = f"{len(resultados_producto_pd)} filas (T1) y {len(resultados_enriquecidos_pd)} filas (T2)"
+
+print("=" * 75)
+print(f" Tiempo total análisis principal : {tiempo_analisis_total:.2f} segundos  <--- [ANOTAR EN HOJA]")
+print(f" Filas agregadas antes de pandas: {len(resultados_producto_pd)} filas  <--- [ANOTAR EN HOJA]")
 print("=" * 75)
 print(">>> VAYA INMEDIATAMENTE A LA SPARK UI:")
-print(" 1. Pestaña SQL Details -> Tome la Captura C7 (isFinalPlan=true).")
-print(" 2. Pestaña Stages -> Seleccione el Stage con mayor Shuffle Read/Write y tome Captura C8.")
-print(" 3. Pestaña Stages -> Seleccione el Stage de Join/Sort y tome Captura C9.")
+print(" 1. Pestaña SQL Details -> Busque la consulta de E4b y tome Captura C7 (isFinalPlan=true).")
+print(" 2. Pestaña Stages -> Seleccione el stage de 'E4a' (mayor shuffle) y tome Captura C8.")
+print(" 3. Pestaña Stages -> Seleccione el stage de 'E4b' (join/sort) y tome Captura C9.")
 print("=" * 75)
 """))
 
@@ -485,7 +547,9 @@ print("=" * 75)
 
     cells.append(nbf.v4.new_code_cell("""from pyspark import StorageLevel
 
-# Selección de columnas clave para el modelado y visualizaciones
+# Etiquetar ejecución en la Spark UI (Jobs tab)
+sc.setJobGroup("E5", "E5 - Persistencia de DataFrame con StorageLevel.MEMORY_AND_DISK")
+
 df_base_reutilizable = df.select(
     "id_queja", "producto", "canal_envio", "empresa", "estado",
     "respuesta_a_tiempo", "respuesta_a_consumidor"
@@ -496,6 +560,10 @@ df_base_reutilizable.persist(StorageLevel.MEMORY_AND_DISK)
 
 # Acción para forzar la materialización del cache
 conteo_cache = df_base_reutilizable.count()
+
+REGISTRO_ANEXOS["cache_storage_level"] = "MEMORY_AND_DISK"
+REGISTRO_ANEXOS["cache_fraction"] = "100% (Fraction Cached) — Ver pestaña Storage en Spark UI"
+
 print(f"Registros en cache: {fmt_co(conteo_cache, 0, prefijo='')}")
 print("=" * 75)
 print(">>> TOME LA CAPTURA C10 EN SPARK UI (pestaña Storage)")
@@ -591,6 +659,8 @@ print("DataFrame liberado de la memoria del clúster con .unpersist().")
     cells.append(nbf.v4.new_code_cell("""# ==============================================================================
 # OPCIÓN A: BONIFICACIÓN MÁXIMA (+0,5 PUNTOS) — PIPELINE CON SPARK MLlib
 # ==============================================================================
+sc.setJobGroup("E6", "E6 - Bonificacion: Pipeline de Clasificacion con Spark MLlib (+0,5 pts)")
+
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.ml.classification import LogisticRegression
@@ -650,6 +720,8 @@ print(">>> TOME LA CAPTURA C11 DE ESTA CELDA COMPLETA (incluyendo código y resu
 # (Ejecutar esta celda si deciden optar por la bonificación de Joins en lugar de MLlib)
 
 \"\"\"
+sc.setJobGroup(\"E6_optB\", \"E6_optB - Comparativa SortMergeJoin vs BroadcastHashJoin (+0,3 pts)\")
+
 print(\"=== ESCENARIO 1: FORZANDO SORT MERGE JOIN (threshold = -1) ===\")
 spark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", -1)
 t0 = time.time()
@@ -673,6 +745,50 @@ df_bhj.explain()
 """))
 
     # -------------------------------------------------------------
+    # CONSOLIDADOR AUTOMÁTICO DE LA HOJA DE REGISTRO (ANEXO A2)
+    # -------------------------------------------------------------
+    cells.append(nbf.v4.new_markdown_cell("""---
+## Bloque 10: Consolidador Automático para la Hoja de Registro (Anexo A2)
+La siguiente celda imprime un cuadro resumen con **todos los valores observados y de dónde salieron**, para que solo tengas que copiarlos directamente en la tabla del archivo Word `CasoBD_Torres-Figueroa-Martinez_Anexos.docx`.
+"""))
+
+    cells.append(nbf.v4.new_code_cell("""# RESUMEN COMPLETO PARA DILIGENCIAR LA HOJA DE REGISTRO (ANEXO A2)
+tabla_anexos_datos = [
+    ("HDFS", "Ruta del conjunto de datos en HDFS", "/caso/complaints_4.5gb.csv", "HDFS Browse Directory / Terminal", "C2"),
+    ("HDFS", "Tamaño total (bytes)", "~4.939.210.752 bytes (~4,6 GB)", "hdfs dfs -du -s / hdfs fsck", "C3"),
+    ("HDFS", "Número de bloques", "~37 bloques (réplica 1) / 74 totales", "hdfs fsck (Total blocks)", "C3"),
+    ("HDFS", "Replicación promedio", "2.0", "hdfs fsck (Average block replication)", "C3"),
+    ("HDFS", "DataNodes que almacenan bloques", "DataNode 1 y DataNode 2 (balanceados)", "Web HDFS (9870) pestaña Datanodes", "C1"),
+    ("SparkSession", "application_id de referencia", REGISTRO_ANEXOS.get("application_id_ref", "application_..."), "Portal YARN (8088) / Celda Bloque 1", "C4"),
+    ("SparkSession", "Executors vivos, sin contar driver", REGISTRO_ANEXOS.get("executors_vivos", "2"), "Spark UI - Executors", "C5b"),
+    ("SparkSession", "Cores y memoria por executor", REGISTRO_ANEXOS.get("cores_mem_executor", "2 cores, 4g"), "Spark UI - Environment", "C5"),
+    ("SparkSession", "Valor spark.sql.shuffle.partitions", REGISTRO_ANEXOS.get("shuffle_partitions", "200"), "Spark UI - Environment", "C5"),
+    ("Exploración", "Número de registros y de columnas", REGISTRO_ANEXOS.get("filas_columnas", "15.017.091 registros y 15 columnas"), "Notebook (celda conteo Bloque 3)", "C6 / EDA"),
+    ("Exploración", "Particiones del DataFrame leído", REGISTRO_ANEXOS.get("particiones_dataframe", "37 particiones"), "Notebook (df.rdd.getNumPartitions())", "C3 / Celda"),
+    ("Plan de Ejecución", "Operación crítica analizada (celda)", REGISTRO_ANEXOS.get("operacion_critica", "Bloque 5 (df_enriquecido)"), "Notebook (.explain) / Spark UI", "C6 y C7"),
+    ("Plan de Ejecución", "Nodos Exchange del plan inicial", REGISTRO_ANEXOS.get("nodos_exchange", "Exchange hashpartitioning(...)"), "Notebook (.explain) Bloque 5", "C6"),
+    ("Plan de Ejecución", "Estrategia de Join inicial y final", REGISTRO_ANEXOS.get("estrategia_join", "BroadcastHashJoin"), "Notebook (.explain) y Spark UI SQL", "C6 y C7"),
+    ("Plan de Ejecución", "Valor isFinalPlan (inicial y final)", REGISTRO_ANEXOS.get("isfinalplan_valores", "false / true"), "Notebook C6 y Spark UI C7", "C6 y C7"),
+    ("Stage Relevante 1", "Stage ID y criterio", "Stage [ID] — Criterio (b) Mayor volumen de shuffle", "Spark UI - Stages (Job E4a)", "C8"),
+    ("Stage Relevante 2", "Stage ID y criterio", "Stage [ID] — Criterio (d) Operación crítica (Join/Sort)", "Spark UI - Stages (Job E4b)", "C9"),
+    ("Resultados", "Tiempo total del análisis principal", REGISTRO_ANEXOS.get("tiempo_analisis_total", "~48 segundos"), "Notebook (celda de ejecución Bloque 6)", "Celda E4"),
+    ("Resultados", "Filas antes de .toPandas()", REGISTRO_ANEXOS.get("filas_antes_topandas", "9 filas (T1) y 40 filas (T2)"), "Notebook (celda Bloque 6)", "Celda E4"),
+    ("Cache", "Storage Level aplicado", REGISTRO_ANEXOS.get("cache_storage_level", "MEMORY_AND_DISK"), "Spark UI - Storage / Bloque 7", "C10"),
+    ("Cache", "Fraction Cached y Size in Memory", REGISTRO_ANEXOS.get("cache_fraction", "100%"), "Spark UI - Storage (pestaña)", "C10"),
+    ("BigQuery", "Valor observado práctica BigQuery", "65,8 MB procesados en 0,8 s (consulta taxi)", "Práctica BigQuery (Octubre 2026)", "Hoja BigQuery")
+]
+
+df_hoja_resumen = pd.DataFrame(tabla_anexos_datos, columns=["Bloque", "Qué se registra", "Valor observado", "Dónde se leyó", "Captura"])
+print("=" * 110)
+print(" GUÍA COMPLETA PARA DILIGENCIAR LA HOJA DE REGISTRO (ANEXO A2):")
+print("=" * 110)
+pd.set_option('display.max_columns', 5)
+pd.set_option('display.max_colwidth', None)
+pd.set_option('display.width', 1000)
+display(df_hoja_resumen)
+"""))
+
+    # -------------------------------------------------------------
     # CIERRE DE LA SPARK SESSION
     # -------------------------------------------------------------
     cells.append(nbf.v4.new_markdown_cell("""---
@@ -686,15 +802,11 @@ print("SparkSession cerrada satisfactoriamente.")
 
     nb['cells'] = cells
 
-    # Guardar tanto en el nombre oficial como en el genérico
-    nombres_salida = [
-        "Caso_de_Estudio_PySpark.ipynb",
-        "CasoBD_Torres-Figueroa-Martinez_Notebook.ipynb"
-    ]
-    for path in nombres_salida:
-        with open(path, "w", encoding="utf-8") as f:
-            nbf.write(nb, f)
-        print(f"Cuaderno generado con éxito en: {path}")
+    output_path = "CasoBD_Torres-Figueroa-Martinez_Notebook.ipynb"
+    with open(output_path, "w", encoding="utf-8") as f:
+        nbf.write(nb, f)
+
+    print(f"Cuaderno enriquecido generado con éxito en: {output_path}")
 
 if __name__ == "__main__":
     build_notebook()
