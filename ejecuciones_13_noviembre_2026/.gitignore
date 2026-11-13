@@ -1,0 +1,18 @@
+# Ignorar archivos de datos grandes (>100MB)
+*.zip
+*.csv
+*.temp
+*.tmp
+
+# No ignorar la carpeta complaints.csv que contiene el notebook original
+!complaints.csv/
+!complaints.csv/datos.ipynb
+
+# Cuadernos de talleres de clase anteriores
+cuadernos/
+
+# Checkpoints de Jupyter y caché de Python
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+__pycache__/
+*.pyc
