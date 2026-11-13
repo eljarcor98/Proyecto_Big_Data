@@ -16,3 +16,8 @@ cuadernos/
 */.ipynb_checkpoints/
 __pycache__/
 *.pyc
+
+# Revision temporal y archivos de OneDrive - NO SINCRONIZAR
+revision_onedrive_13nov/
+big data/
+OneDrive_*/
