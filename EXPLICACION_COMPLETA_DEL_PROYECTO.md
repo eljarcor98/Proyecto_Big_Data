@@ -199,3 +199,23 @@ Para la sustentación y el documento Word, estos son los **números de oro ofici
 * **Storage Level:** `MEMORY_AND_DISK`
 * **Caché:** Fraction Cached = 100%, Size in Memory = 115.3 MiB, Size on Disk = 0 B
 * **MLlib Bonificación:** ROC-AUC = 0,8301, Accuracy = 99,61%, Tiempo = 41,42 s.
+
+
+---
+
+## 8. MAPA INTEGRAL DE EJECUCIONES EN LA CONSULTORÍA (CFPB)
+### ¿Qué hace cada ejecución, qué propósito tiene y qué resultado da la impresión?
+
+| Bloque | Ejecución en el Clúster | Componente y Responsable | Propósito en la Consultoría (CFPB) | Resultado e Impresión Observada |
+| :---: | :--- | :---: | :--- | :--- |
+| **Bloque 1** | **SparkSession sobre YARN** | **Comp. B**<br>*(A. E. Martínez)* | Dimensionar el clúster con concurrencia óptima para procesar el censo nacional de 15M de quejas sin cuellos de botella ni fallos de memoria. | `application_1794430508749_0002`: 2 ejecutores × 4 GB RAM × 2 cores (8 GB RAM y 4 cores totales), 200 particiones de shuffle y AQE activo. |
+| **Bloque 2** | **Ingesta HDFS con StructType** | **Comp. A**<br>*(A. S. Torres)* | Garantizar almacenamiento seguro y tolerante a fallos del repositorio federal (4,6 GB). Usar `StructType` para evitar el costo de inferencia automática. | Ingesta en **1,24 s** dividida en **35 bloques de 128 MB** con **factor de replicación 2.0** (70 réplicas físicas entre DataNodes). Cero pérdida de datos. |
+| **Bloque 3** | **Auditoría Censal (EDA)** | **Comp. B**<br>*(A. E. Martínez)* | Auditar el 100% de las quejas ciudadanas (sin muestreo que introduzca sesgos legales) y certificar la latencia de respuesta institucional. | **15.017.091 quejas censadas** en 18 columnas; integridad referencial del 100%; latencia promedio de respuesta de **4,45 días** (cumpliendo límite legal de 15 días). |
+| **Bloque 4** | **Transformación 1: Riesgo por Producto** | **Comp. B**<br>*(A. E. Martínez)* | Identificar qué productos concentran disputas y cuáles otorgan compensación económica al consumidor ante abusos bancarios. | 14 categorías en **13,75 s**. *Credit reporting* y tarjetas concentran >70% de quejas pero con **<10% de compensación económica**, evidenciando alta fricción administrativa. |
+| **Bloque 4** | **Transformación 2: Equidad Regional** | **Comp. B**<br>*(A. E. Martínez)* | Evaluar disparidades territoriales de atención bancaria cruzando 51 estados clasificados en 4 macro-regiones. | 69 combinaciones en **12,44 s**. La región **Sur concentra el 40,3%** de la litigiosidad nacional, priorizando la apertura de oficinas de inspección de la CFPB. |
+| **Bloque 5** | **Optimización Catalyst y AQE** | **Comp. B**<br>*(A. E. Martínez)* | Auditar la eficiencia computacional del plan físico para no saturar la red ni desperdiciar presupuesto público en el clúster. | Whole-Stage CodeGen (`*`), pre-agregación en 2 fases (`HashAggregate` con `partial_count`) y difusión de estados con `BroadcastHashJoin`. |
+| **Bloque 6** | **Auditoría Spark UI y Spill** | **Comp. C**<br>*(N. F. Figueroa)* | Certificar estabilidad en estrés operativo, tráfico de red (Shuffle Read) y verificar ausencia de derrame a disco. | Stage 30 (62,0 MiB Shuffle Read) y Stage 19 (45,5 KiB). **Spill (Memoria y Disco) = 0 B («ninguno»)**. Tiempo total de transformaciones: **26,18 s**. |
+| **Bloque 7** | **Persistencia Selectiva** | **Comp. C**<br>*(N. F. Figueroa)* | Mantener en memoria RAM la capa depurada para tableros sin el costo de releer 4,6 GB desde HDFS. | Ocupación en RAM de **solo 115,3 MiB** para 15M de filas (reducción 97% con Tungsten); liberado con `.unpersist()`. |
+| **Bloque 8** | **Visualizaciones Ejecutivas** | **Comp. C**<br>*(N. F. Figueroa)* | Traducir los hallazgos en gráficos para la Junta Directiva de la CFPB con rigor perceptivo. | 2 gráficos ejecutivos (Okabe-Ito, formato colombiano) que confirman la primacía de quejas en reportes crediticios y el predominio territorial del Sur. |
+| **Bloque 9** | **Supervisión MLlib (+0,5 pts)** | **Comp. C**<br>*(N. F. Figueroa)* | Evolucionar de una supervisión reactiva a preventiva: predecir qué entidades bancarias violarán el plazo legal de respuesta al consumidor. | Pipeline supervisado con LogisticRegression entrenado en **41,42 s** con **ROC-AUC = 0,8301** y **Exactitud = 99,61%** en prueba independiente. |
+| **Bloque 10** | **Matriz Consolidada y Cloud** | **Comp. D**<br>*(Compartida)* | Entregar a la CFPB la hoja de balance técnico y la recomendación económica On-Premise vs Cloud. | Matriz unificada de 16 indicadores auditados y análisis de costo total de propiedad (TCO) para arquitectura híbrida. |
