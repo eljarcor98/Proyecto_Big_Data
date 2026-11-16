@@ -69,7 +69,7 @@ Spark descuenta la memoria en 3 capas de protección:
 
 ### C. Esquema Estricto (`StructType`) vs. `inferSchema=True`
 * **Con `inferSchema=True`:** Spark realiza un **doble escaneo** de HDFS. Primero lee los 4,6 GB para adivinar si una columna es texto, fecha o número; luego vuelve a leer los 4,6 GB para cargarlos (transfiere más de 9,2 GB por red y disco).
-* **Con `StructType` explícito:** Spark suprime el primer escaneo. Lee una sola vez el archivo e ingesta los 15 millones de filas de forma instantánea (**1,24 segundos**), asegurando la tipificación legal estricta de las 18 columnas.
+* **Con `StructType` explícito:** Spark suprime el primer escaneo. Lee una sola vez el archivo e ingesta los 15 millones de filas de forma instantánea (**1,24 a 1,44 segundos**), asegurando la tipificación legal estricta de las 15 columnas.
 
 ---
 
@@ -96,7 +96,7 @@ Antes de Spark 3, los planes de ejecución eran estáticos (se planificaban ante
 1. **Coalescing dinámico de particiones:**
    * Al agrupar por producto financiero, solo existen 18 categorías en todo EE. UU.
    * De las 200 particiones originales de shuffle, muchas quedan con muy poquitas filas o vacías.
-   * AQE detecta el tamaño real de los datos y **fusiona automáticamente las particiones enanas**, reduciendo tareas innecesarias y liberando CPU.
+   * AQE detecta el tamaño real de los datos y **fusiona automáticamente las particiones enanas**, reduciendo tareas innecesarias y liberando CPU (por eso en el Stage 30 solo corrieron 5 tareas en lugar de 200).
 2. **Conversión dinámica a Broadcast Join:**
    * Si tras filtrar datos una tabla resulta pesar menos de 10 MB, AQE cambia la estrategia en caliente a un *Broadcast Join*, eliminando el costoso intercambio de datos por red.
 3. **Manejo de sesgo de datos (*Skew Join*):**
@@ -130,6 +130,7 @@ En la captura **C10 (Spark UI - Storage)** se evidencia:
 * **Nivel de almacenamiento:** `Disk Memory Deserialized 1x Replicated` (`MEMORY_AND_DISK`).
 * **Fraction Cached:** `100%`.
 * **Size in Memory:** **117.0 MiB** (reducción $>97\%$ frente a los 4,6 GB originales).
+* **Size on Disk:** **0 B** (cero bytes en disco local).
 
 ### ¿Por qué se redujo tanto el tamaño en memoria?
 1. **Poda estricta de columnas (*Column Pruning*):** El archivo CSV crudo tiene 18 columnas con textos largos (narrativas de quejas de miles de caracteres, nombres de compañías, direcciones). El DataFrame cacheado solo conserva las 3 o 4 columnas numéricas y categóricas estrictamente necesarias para el análisis.
@@ -153,6 +154,7 @@ Un **Spill** ocurre cuando una partición o una operación de ordenamiento/agreg
 2. **2,2 GiB de Storage/Execution Memory por nodo:** Como cada ejecutor solo procesaba 2 tareas concurrentes (1 por core), cada tarea disponía de más de **1 GB de RAM dedicada**. Un lote de pocos megabytes nunca saturó el gigabyte disponible.
 3. **Uso de HashAggregate con pre-agregación:** Redujo el volumen de datos en memoria antes de transferir por shuffle.
 4. **BroadcastHashJoin:** Evitó barajar los 15 millones de filas para el join territorial.
+5. **Tiempo total del análisis:** El clúster completó todo el pipeline analítico distribuido en **26,18 segundos**.
 
 ---
 
@@ -186,6 +188,46 @@ Si el jurado o la docente pregunta: *«¿Por qué incluyeron ese dato de BigQuer
 
 ---
 
+## 9. Machine Learning Distribuido con Spark MLlib (Bonificación +0,5 Puntos)
+
+En la celda 14 del Notebook y la captura **C11**, se ejecutó un pipeline de Machine Learning sobre las 35 particiones de HDFS para predecir si una queja financiera recibirá respuesta a tiempo o caerá en mora legal:
+
+### A. Pipeline de Ingeniería de Características
+1. **`StringIndexer`:** Transforma variables categóricas de alta cardinalidad (`producto`, `canal_envio`, `empresa`, `estado`) en índices numéricos discretos.
+2. **`VectorAssembler`:** Empaqueta todas las variables predictoras en un único vector denso/disperso de características (`features`).
+3. **`LogisticRegression` distribuida:** Algoritmo de clasificación binaria optimizado en paralelo con L-BFGS a través de los nodos de trabajo.
+
+### B. Métricas de Rendimiento del Modelo
+* **ROC-AUC = 0,8301:** Evalúa la capacidad del modelo para distinguir quejas en mora frente a quejas atendidas a tiempo en todos los umbrales de probabilidad. Un AUC superior a 0,80 certifica una **capacidad discriminante excelente**, inmune al desbalance natural de clases del sistema bancario.
+* **Exactitud (Accuracy) = 99,61%:** Proporción de predicciones correctas sobre la masa global de quejas.
+* **Tiempo de Entrenamiento:** **41,42 segundos** sobre los 15 millones de quejas distribuidos en el clúster.
+
+---
+
+## 10. Banco de Preguntas Trampa de la Docente y Respuestas de Ingeniería
+
+### Pregunta 1: «¿Por qué en el Stage 30 solo se ejecutaron 5 tareas y en el Stage 19 solo 1 tarea, si ustedes configuraron 200 particiones de shuffle?»
+> **Respuesta:**
+> *"Al iniciar la sesión fijamos `spark.sql.shuffle.partitions = 200` como margen de concurrencia para evitar derrames. Sin embargo, al tener activado **Adaptive Query Execution (AQE)**, Spark analiza en tiempo real el tamaño real de los datos intermedios producidos por cada etapa. Como usamos `HashAggregate` con pre-agregación local, el volumen generado por los subtotales fue de apenas 62 MB en el Stage 30 (en lugar de varios gigabytes), por lo que AQE fusionó dinámicamente las 200 particiones enanas en solo 5 particiones eficientes. En el Stage 19, como solo se ordenaba el resultado territorial de los 51 estados (45,5 KiB), AQE consolidó todo en una única tarea, ahorrando más de un 95% de sobrecarga de CPU."*
+
+### Pregunta 2: «¿Por qué eligieron MEMORY_AND_DISK en lugar de MEMORY_ONLY para persistir el DataFrame?»
+> **Respuesta:**
+> *"Por seguridad y resiliencia arquitectural. Si hubiéramos configurado `MEMORY_ONLY` y una consulta posterior saturaba la memoria de los ejecutores, Spark habría arrojado un error fatal de `OutOfMemoryError` o habría tenido que recalcular todo el grafo desde HDFS. Con `MEMORY_AND_DISK`, si la RAM se llena, el exceso desborda limpiamente a disco sin fallar. No obstante, gracias a la poda estricta de columnas y el formato binario columnar Tungsten, el dataset limpio pesó solo **117 MiB**, por lo que el 100% de los datos cupieron en la memoria RAM y el tamaño ocupado en disco fue literalmente **0 Bytes**."*
+
+### Pregunta 3: «¿Por qué la llamada a `.toPandas()` no generó un OutOfMemory en el Driver?»
+> **Respuesta:**
+> *"Porque respetamos con total rigurosidad el patrón de diseño de Big Data: jamás ejecutamos `.toPandas()` sobre el DataFrame censal de 15 millones de filas. Todo el procesamiento masivo de filtrado, agregación y cálculo de medias se realizó en paralelo en los workers de Spark. Únicamente transferimos al Driver mediante `.toPandas()` los dos DataFrames ya agregados: el de productos financieros (14 filas) y el de estados (51 filas). Bajar 14 filas a Pandas pesa menos de 2 Kilobytes, garantizando cero saturación de memoria en el Driver."*
+
+### Pregunta 4: «¿Qué diferencia hay entre spark.default.parallelism y spark.sql.shuffle.partitions?»
+> **Respuesta:**
+> *"`spark.default.parallelism` aplica por defecto para las operaciones de RDDs crudos basadas en cores de hardware (en nuestro clúster son 4 núcleos físicos). En cambio, `spark.sql.shuffle.partitions` (fijado en 200) aplica exclusivamente para las operaciones relacionales de DataFrames y Spark SQL que involucran wide transformations (intercambio masivo de datos por red como `groupBy`, `join` y `distinct`)."*
+
+### Pregunta 5: «¿Por qué en la captura C6 dice isFinalPlan=false y en la captura C7 dice isFinalPlan=true?»
+> **Respuesta:**
+> *"Porque C6 corresponde a la salida de `.explain()` en el Notebook antes de la ejecución física; en ese momento Spark solo tiene una estimación estática y AQE aún no ha inspeccionado los tamaños reales (`isFinalPlan=false`). En cambio, C7 corresponde a la pestaña SQL de Spark UI capturada una vez terminado el job, donde AQE ya midió las estadísticas reales del shuffle en runtime y adaptó el plan físico final fusionando particiones (`isFinalPlan=true`)."*
+
+---
+
 ## Resumen Ejecutivo de Métricas para la Sustentación
 
 | Parámetro | Valor Técnico | Justificación de Ingeniería |
@@ -201,7 +243,7 @@ Si el jurado o la docente pregunta: *«¿Por qué incluyeron ese dato de BigQuer
 | **Cruce Territorial** | `BroadcastHashJoin` | Difusión de 51 estados a RAM; cero movimiento de 15M por red. |
 | **Shuffle Read (S30)** | 62,0 MiB | Volumen mínimo transferido gracias a la pre-agregación. |
 | **Shuffle Read (S19)** | 45,5 KiB | Transferencia casi nula en ordenamiento territorial. |
-| **Caché en Memoria** | 117,0 MiB (`MEMORY_AND_DISK`) | Compresión $>97\%$ con formato binario columnar Tungsten. |
+| **Caché en Memoria** | 117,0 MiB (`MEMORY_AND_DISK`) | Compresión $>97\%$ con formato binario columnar Tungsten (0 B en disco). |
 | **Spill en Disco/RAM** | **0 B («ninguno»)** | Cero desbordamiento; ejecución 100% en memoria en **26,18 s**. |
 | **Benchmark BigQuery** | 65,8 MB en 0,8 s | Métrica de referencia Cloud Serverless para sustentar rúbrica A5. |
-| **Modelo MLlib** | ROC-AUC: 0,8301 · Acc: 99,61% | Capacidad del 83% para discriminar y anticipar quejas en mora legal. |
+| **Modelo MLlib** | ROC-AUC: 0,8301 · Acc: 99,61% | Clasificación predictiva en 41,42 s (+0,5 puntos de bonificación). |
