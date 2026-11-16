@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sustentación Big Data: Consultoría CFPB 2026-II</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F8F7F4;
+      --surface: #FFFFFF;
+      --surface-subtle: #F0EFEA;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-accent: rgba(2, 132, 199, 0.35);
+      --text-main: #111113;
+      --text-muted: #4B5563;
+      --accent-blue: #0284C7;
+      --accent-orange: #D97706;
+      --accent-emerald: #059669;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #1A1A22;
+      font-family: var(--font-body);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    @page {
+      size: 16in 9in;
+      margin: 0;
+    }
+
+    .presentation-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      padding: 36px 0;
+    }
+
+    .slide {
+      width: 1600px;
+      height: 900px;
+      background: var(--bg);
+      border-radius: 12px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.35);
+      position: relative;
+      padding: 52px 68px 44px 68px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+      overflow: hidden;
+    }
+
+    /* Print styles for PDF export */
+    @media print {
+      body { background: transparent; padding: 0; }
+      .presentation-container { gap: 0; padding: 0; }
+      .slide {
+        box-shadow: none;
+        border-radius: 0;
+        width: 100vw;
+        height: 100vh;
+        page-break-after: always;
+      }
+      .no-print { display: none !important; }
+    }
+
+    /* Header & Tag */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .comp-pill {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: #E0F2FE;
+      color: var(--accent-blue);
+      border: 1px solid rgba(2, 132, 199, 0.25);
+    }
+    .comp-pill.comp-b {
+      background: #FEF3C7;
+      color: var(--accent-orange);
+      border-color: rgba(217, 119, 6, 0.3);
+    }
+    .comp-pill.comp-c {
+      background: #D1FAE5;
+      color: var(--accent-emerald);
+      border-color: rgba(5, 150, 105, 0.3);
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .slide-title {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 6px;
+    }
+
+    /* Bento Grid Layouts */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      flex-grow: 1;
+      margin: 16px 0 20px 0;
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 26px 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .bento-card.highlight {
+      border: 1.5px solid var(--border-accent);
+      background: linear-gradient(180deg, #FFFFFF 0%, #F0F9FF 100%);
+    }
+
+    .card-label {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .card-body {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      flex-grow: 1;
+    }
+
+    .card-body ul {
+      list-style-type: none;
+    }
+    .card-body li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 10px;
+    }
+    .card-body li::before {
+      content: '•';
+      position: absolute;
+      left: 2px;
+      color: var(--accent-blue);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      line-height: 1;
+      margin: 10px 0;
+    }
+    .metric-value.orange { color: var(--accent-orange); }
+    .metric-value.emerald { color: var(--accent-emerald); }
+
+    .metric-caption {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .code-tag {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: #0369A1;
+    }
+
+    /* Speaker Notes Bar */
+    .speaker-notes {
+      background: #EFECE6;
+      border-left: 4px solid var(--accent-blue);
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .speaker-notes b {
+      color: #111827;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Portada Styles */
+    .cover-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      padding: 20px 40px;
+    }
+    .cover-univ {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .cover-title {
+      font-family: var(--font-heading);
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      max-width: 1300px;
+    }
+    .cover-subtitle {
+      font-size: 21px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      max-width: 1100px;
+      margin-bottom: 40px;
+    }
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding-top: 28px;
+      border-top: 1.5px solid var(--border);
+    }
+    .meta-box h4 {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .meta-box p {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+
+<div class="presentation-container">
+
+  <!-- SLIDE 1: PORTADA -->
+  <section class="slide" id="slide-1">
+    <div class="cover-content">
+      <div class="cover-univ">Universidad Externado de Colombia · Maestría en Ciencia de Datos · Big Data 2026-II</div>
+      <h1 class="cover-title">Consultoría en Big Data: Auditoría Masiva de Quejas Financieras (CFPB 2023–2026)</h1>
+      <p class="cover-subtitle">Procesamiento Distribuido de 15.017.091 Registros sobre Clúster Hadoop YARN y Apache Spark</p>
+      
+      <div class="cover-meta-grid">
+        <div class="meta-box">
+          <h4>Entidad Contratante</h4>
+          <p>Consumer Financial Protection Bureau (CFPB) · EE. UU.</p>
+        </div>
+        <div class="meta-box">
+          <h4>Autores de la Consultoría</h4>
+          <p>Arnold Santiago Torres A.<br>Alejandro Esteban Martínez A.<br>Nicolas Felipe Figueroa S.</p>
+        </div>
+        <div class="meta-box">
+          <h4>Infraestructura Clúster</h4>
+          <p>Equipo 0068656 · Sala Deep Learning<br>1 Master + 2 Workers (YARN/HDFS)</p>
+        </div>
+        <div class="meta-box">
+          <h4>Docente Titular</h4>
+          <p>Yessica Liceth Velásquez C.<br>Grupo MABD02</p>
+        </div>
+      </div>
+    </div>
+    <div class="speaker-notes">
+      <b>Guion del Orador:</b> "Buenas tardes profesora. Presentamos el proyecto final de consultoría para la CFPB, auditando 15 millones de quejas con Apache Spark en clúster propio de 3 nodos. La presentación está organizada estrictamente en los componentes A, B y C."
+    </div>
+  </section>
+
+  <!-- SLIDE 2: COMPONENTE A (1/3) -->
+  <section class="slide" id="slide-2">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill">Componente A: Datos y Almacenamiento (1/3)</div>
+        <div class="slide-counter">02 / 10</div>
+      </div>
+      <h2 class="slide-title">Selección Oficial, Poda y Validación de 15.017.091 Registros</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Fuente de Datos</div>
+        <div class="card-title">Repositorio Abierto CFPB</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Entidad Oficial:</b> Consumer Financial Protection Bureau / Data.gov.</li>
+            <li><b>Fenómeno de Estudio:</b> Abusos bancarios, errores en reportes de crédito y mora legal en EE. UU.</li>
+            <li><b>Actualización:</b> Censo de frecuencia diaria, descargado en su corte final al 5 de noviembre de 2026.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Criterio de Ingeniería</div>
+        <div class="card-title">Poda Temporal Justificada</div>
+        <div class="metric-value">15.017.091</div>
+        <div class="metric-caption"><b>Filas preservadas (~4,6 GB).</b> Se descartó el histórico antiguo (2011 a 2023-I: 3,9M filas) para cumplir estrictamente el rango de 2 a 5 GB, concentrando el 100% de la tendencia contemporánea.</div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Disponibilidad en Nube</div>
+        <div class="card-title">Respaldo GitHub Releases</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Restricción de Sala:</b> Bloqueo de puertos USB por seguridad institucional.</li>
+            <li><b>Respaldo:</b> Archivo ZIP publicado en GitHub Releases v1.0.0.</li>
+            <li><b>Atributos Clave:</b> 15 columnas base requeridas para la tipificación regulatoria.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Santiago Torres):</b> "En el Componente A seleccionamos el dataset oficial de la CFPB. Como el archivo crudo pesaba 5,8 GB y superaba el tope de 5 GB, podamos los años antiguos de 2011 a 2023-I, dejando 15.017.091 quejas recientes que pesan exactamente 4,6 GB. Lo publicamos en GitHub para poder transferirlo sin memorias USB."
+    </div>
+  </section>
+
+  <!-- SLIDE 3: COMPONENTE A (2/3) -->
+  <section class="slide" id="slide-3">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill">Componente A: Datos y Almacenamiento (2/3)</div>
+        <div class="slide-counter">03 / 10</div>
+      </div>
+      <h2 class="slide-title">Ingesta por Streaming a HDFS y Factor de Replicación 2.0</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Restricción Física</div>
+        <div class="card-title">Almacenamiento Local Crítico</div>
+        <div class="card-body">
+          <ul>
+            <li>Las máquinas virtuales contaban con espacio limitado en disco (~54 GB libres).</li>
+            <li>Descargar el ZIP, descomprimir el CSV y replicar en HDFS habría demandado más de <b>14 GB</b> locales.</li>
+            <li>Riesgo: Colapso del nodo anfitrión por saturación de almacenamiento.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Arquitectura de Ingesta</div>
+        <div class="card-title">Streaming sin Copia Local</div>
+        <div class="card-body">
+          <p style="margin-bottom: 12px;">Canalización directa en memoria desde GitHub hacia HDFS:</p>
+          <p><span class="code-tag">curl -L &lt;URL&gt; | funzip | hdfs dfs -put - /caso/complaints_4.5gb.csv</span></p>
+          <div class="metric-value emerald" style="font-size: 32px; margin-top: 14px;">0 Bytes</div>
+          <div class="metric-caption">Desperdicio nulo de almacenamiento en el sistema de archivos del nodo maestro.</div>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Tolerancia a Fallos</div>
+        <div class="card-title">Replicación 2.0 (Captura C2)</div>
+        <div class="card-body">
+          <ul>
+            <li>Se fijó replicación con <span class="code-tag">hdfs dfs -setrep -R 2</span>.</li>
+            <li>Cada bloque físico cuenta con 2 copias íntegras distribuidas entre Nodo 2 y Nodo 3.</li>
+            <li><b>Resiliencia:</b> El clúster sobrevive a la pérdida total de un DataNode sin degradar los datos.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Santiago Torres):</b> "Para no llenar el disco del nodo maestro, canalizamos la descarga directamente desde la nube a HDFS por streaming en memoria con funzip. Luego aseguramos la tolerancia a fallos configurando el factor de replicación en 2.0, verificado en la captura C2 del NameNode."
+    </div>
+  </section>
+
+  <!-- SLIDE 4: COMPONENTE A (3/3) -->
+  <section class="slide" id="slide-4">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill">Componente A: Datos y Almacenamiento (3/3)</div>
+        <div class="slide-counter">04 / 10</div>
+      </div>
+      <h2 class="slide-title">Auditoría de Bloques HDFS y Estado del Clúster (C1, C2, C3)</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Topología de Red (C1)</div>
+        <div class="card-title">2 DataNodes en Servicio</div>
+        <div class="card-body">
+          <ul>
+            <li>NameNode (puerto 9870) certifica los nodos trabajadores: <b>Nodo 2</b> y <b>Nodo 3</b>.</li>
+            <li>Estado 100% operativo sin nodos caídos (*Dead Nodes = 0*).</li>
+            <li>Capacidad distribuida homogénea en ambos workers.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Auditoría fsck (C3)</div>
+        <div class="card-title">Certificación de Bloques</div>
+        <div class="metric-value">35 Bloques</div>
+        <div class="metric-caption">Bloques físicos estándar de 128 MB (70 bloques totales considerando factor de réplica 2.0). Estado oficial: <b>HEALTHY</b> con 0 bloques corruptos o desbalanceados.</div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Métricas Verificadas</div>
+        <div class="card-title">Cifras Exactas de Almacenamiento</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Tamaño Total:</b> 4.939.210.752 bytes (~4,6 GB).</li>
+            <li><b>Average Block Replication:</b> Exactamente <b>2.0</b>.</li>
+            <li><b>Ubicación:</b> Bloques del 0 al 34 distribuidos en espejo entre ambos DataNodes.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Santiago Torres):</b> "Auditamos el sistema de archivos con las capturas C1, C2 y C3: en el portal NameNode comprobamos los 2 DataNodes activos; y con hdfs fsck confirmamos que el dataset ocupa 35 bloques de 128 MB con estado HEALTHY y replicación media exacta de 2,0."
+    </div>
+  </section>
+
+  <!-- SLIDE 5: COMPONENTE B (1/3) -->
+  <section class="slide" id="slide-5">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill comp-b">Componente B: Procesamiento (1/3)</div>
+        <div class="slide-counter">05 / 10</div>
+      </div>
+      <h2 class="slide-title">Configuración de SparkSession en YARN y Memoria (C4, C5, C5b)</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Parámetros YARN (C5)</div>
+        <div class="card-title">Cómputo en Clúster Físico</div>
+        <div class="card-body">
+          <ul>
+            <li><span class="code-tag">master('yarn')</span>: Orquestación formal bajo gestor distribuido.</li>
+            <li><span class="code-tag">executor.instances = 2</span>: Un worker por máquina física.</li>
+            <li><span class="code-tag">executor.cores = 2</span>: 4 núcleos totales de cómputo paralelo.</li>
+            <li><span class="code-tag">driver.memory = 1g</span>: Coordinación y orquestación del grafo.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Unified Memory Management</div>
+        <div class="card-title">¿Por qué 2,2 GiB en C5b?</div>
+        <div class="metric-value orange">2,2 GiB</div>
+        <div class="metric-caption"><b>Storage Memory Neta por Worker.</b> Asignamos 4 GB de RAM a cada JVM. Spark reserva 300 MB internos y aplica 40% de User Memory (GC), habilitando el 60% neto (2,2 GiB) para cómputo seguro sin OOM.</div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Trazabilidad Oficial (C4)</div>
+        <div class="card-title">Application ID de Referencia</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Referencia:</b> <span class="code-tag">application_1794259897184_0001</span>.</li>
+            <li>Validada en el portal ResourceManager (puerto 8088).</li>
+            <li><span class="code-tag">shuffle.partitions = 200</span>: Lotes de ~75k filas por tarea.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Alejandro Martínez):</b> "En el Componente B orquestamos Spark sobre YARN con 2 ejecutores, 4 cores y 8 GB de RAM totales. Explicamos el misterio de la memoria: cada ejecutor tiene 4 GB físicos, de los cuales Spark reserva 2,2 GiB netos de Storage Memory para garantizar que el recolector de basura opere sin riesgo de colapso."
+    </div>
+  </section>
+
+  <!-- SLIDE 6: COMPONENTE B (2/3) -->
+  <section class="slide" id="slide-6">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill comp-b">Componente B: Procesamiento (2/3)</div>
+        <div class="slide-counter">06 / 10</div>
+      </div>
+      <h2 class="slide-title">Ingesta con StructType y EDA Masivo de 15 Millones de Filas</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Optimización de Ingesta</div>
+        <div class="card-title">StructType Explícito</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Problema de inferSchema:</b> Obliga a un doble escaneo de los 4,6 GB (lee más de 9,2 GB por red y disco).</li>
+            <li><b>Solución de Ingeniería:</b> Definición de <span class="code-tag">StructType</span> estricto de 15 campos.</li>
+            <li><b>Resultado:</b> Ingesta instantánea en solo <b>1,44 segundos</b>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Análisis Exploratorio (EDA)</div>
+        <div class="card-title">Volumen y Particiones</div>
+        <div class="metric-value orange">15.017.091</div>
+        <div class="metric-caption"><b>Quejas en 35 particiones iniciales.</b> <span class="code-tag">df.rdd.getNumPartitions()</span> ratifica la correspondencia unívoca con los 35 bloques de 128 MB de HDFS. Crecimiento anual de 586k (2023) a 6,25M (2026).</div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Calidad de Datos</div>
+        <div class="card-title">Integridad de Atributos</div>
+        <div class="card-body">
+          <ul>
+            <li><b>0% Nulos:</b> Variables críticas (fechas, producto, empresa, canal de envío y respuesta a tiempo).</li>
+            <li><b>Nulos Justificados:</b> Subproducto y queja narrativa (campos opcionales del formulario ciudadano).</li>
+            <li><b>Canal Predominante:</b> Vía Web concentra >85% de las radicaciones.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Alejandro Martínez):</b> "Suprimimos el doble escaneo de HDFS definiendo un StructType explícito, lo que cargó los 15 millones de filas en 1,44 segundos. El EDA verificó que los datos se distribuyeron exactamente en 35 particiones de lectura coincidentes con los bloques de HDFS, con cero nulos en las variables de negocio."
+    </div>
+  </section>
+
+  <!-- SLIDE 7: COMPONENTE B (3/3) -->
+  <section class="slide" id="slide-7">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill comp-b">Componente B: Procesamiento (3/3)</div>
+        <div class="slide-counter">07 / 10</div>
+      </div>
+      <h2 class="slide-title">Transformaciones Complejas y Planes Físicos AQE (C6, C7)</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Transformación 1</div>
+        <div class="card-title">Índice de Latencia y Eficiencia</div>
+        <div class="card-body">
+          <ul>
+            <li>Cálculo de latencia: <span class="code-tag">datediff(fecha_envio, fecha_recibida)</span>.</li>
+            <li>Agregación multivariada por producto financiero: volumen de quejas, días de remisión y tasa de respuesta oportuna.</li>
+            <li>Pre-agregación en memoria con <span class="code-tag">HashAggregate</span>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Transformación 2</div>
+        <div class="card-title">BroadcastHashJoin Territorial</div>
+        <div class="card-body">
+          <ul>
+            <li>Cruce con catálogo territorial de 51 estados de EE. UU.</li>
+            <li><b>Optimización:</b> Difusión por broadcast a la RAM de cada worker.</li>
+            <li><b>Impacto:</b> Cero intercambio de las 15M de quejas por la red para ejecutar el cruce.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Optimización Dinámica</div>
+        <div class="card-title">Planes Físicos AQE (C6 vs C7)</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Plan Inicial (C6):</b> <span class="code-tag">AdaptiveSparkPlan isFinalPlan=false</span> con 4 nodos Exchange de particionamiento estático.</li>
+            <li><b>Plan Adaptativo en Runtime (C7):</b> <span class="code-tag">isFinalPlan=true</span>. AQE fusionó dinámicamente particiones ociosas tras el filtrado.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Alejandro Martínez):</b> "Ejecutamos dos transformaciones analíticas: calculamos la demora en días por producto y cruzamos territorialmente con 51 estados usando BroadcastHashJoin, eliminando el shuffle de red. En C6 mostramos el plan inicial con isFinalPlan=false y en C7 demostramos cómo AQE optimizó las particiones en tiempo de ejecución."
+    </div>
+  </section>
+
+  <!-- SLIDE 8: COMPONENTE C (1/3) -->
+  <section class="slide" id="slide-8">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (1/3)</div>
+        <div class="slide-counter">08 / 10</div>
+      </div>
+      <h2 class="slide-title">Auditoría de Spark UI: Stages Críticos y Certificación Spill = 0 B (C8, C9)</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Stage Relevante 1 (C8)</div>
+        <div class="card-title">Stage 30: Agregación Masiva</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Criterio (b):</b> Mayor volumen de Shuffle Read del job.</li>
+            <li><b>Tareas:</b> 5 tareas completadas en <b>8 segundos</b>.</li>
+            <li><b>Volumen:</b> Shuffle Read = 62.0 MiB / Write = 32.1 KiB.</li>
+            <li>Uso eficiente de tabla hash en memoria sin colas.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Stage Relevante 2 (C9)</div>
+        <div class="card-title">Stage 19: Ordenamiento Regional</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Criterio (d):</b> Operación crítica de sort y cruce.</li>
+            <li><b>Tareas:</b> 1 tarea resuelta en solo <b>52 ms</b>.</li>
+            <li><b>Volumen:</b> Shuffle Read = 45.5 KiB.</li>
+            <li>Tráfico de red prácticamente nulo tras pre-agregación.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Certificación de Rendimiento</div>
+        <div class="card-title">Cero Derrames a Disco</div>
+        <div class="metric-value emerald">0 B Spill</div>
+        <div class="metric-caption"><b>Spill (Memory) = 0 B · Spill (Disk) = 0 B.</b> El dimensionamiento de 200 particiones y 2,2 GiB utilizables contuvo el 100% de los datos en RAM, completando el análisis en <b>26,18 segundos</b>.</div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Nicolas Figueroa):</b> "En el Componente C auditamos el rendimiento en Spark UI: el Stage 30 agrupó los 15 millones con 62 MB de shuffle en 8 segundos; y el Stage 19 ordenó los estados en 52 milisegundos. Certificamos cero derrames en disco o memoria, procesando todo el volumen en 26,18 segundos sin degradación."
+    </div>
+  </section>
+
+  <!-- SLIDE 9: COMPONENTE C (2/3) -->
+  <section class="slide" id="slide-9">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (2/3)</div>
+        <div class="slide-counter">09 / 10</div>
+      </div>
+      <h2 class="slide-title">Persistencia en Caché (117 MiB) y Visualizaciones Okabe-Ito (C10)</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card highlight">
+        <div class="card-label">Optimización de Almacenamiento</div>
+        <div class="card-title">Persistencia MEMORY_AND_DISK (C10)</div>
+        <div class="metric-value emerald">117,0 MiB</div>
+        <div class="metric-caption"><b>Reducción >97% frente a los 4,6 GB.</b> Poda estricta de columnas no requeridas y compresión columnar binaria Tungsten. Fracción cacheada: <b>100%</b>, liberada al final con <span class="code-tag">.unpersist()</span>.</div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Arquitectura de Visualización</div>
+        <div class="card-title">Patrón Distribuido a Pandas</div>
+        <div class="card-body">
+          <ul>
+            <li>Procesamiento pesado en Spark sobre los 15M de filas.</li>
+            <li>Uso de <span class="code-tag">.toPandas()</span> <b>únicamente sobre las 14 y 51 filas agregadas</b> (cero saturación en Driver).</li>
+            <li>Formato numérico colombiano estricto con función <span class="code-tag">fmt_co()</span>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Accesibilidad y Hallazgos</div>
+        <div class="card-title">Diseño y Resultados de Negocio</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Paleta Okabe-Ito:</b> Accesible para personas con daltonismo, sin líneas decorativas superfluas.</li>
+            <li><b>Hallazgo Regulatorio:</b> Créditos concentran el mayor volumen, pero Hipotecas presentan mayor severidad y disputa legal.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Nicolas Figueroa):</b> "Persistimos el DataFrame limpio con MEMORY_AND_DISK: gracias al formato binario Tungsten y la poda de texto, el peso cayó de 4,6 GB a solo 117 MiB en RAM. Para los gráficos aplicamos el patrón distribuido: procesamos en Spark y solo bajamos a Pandas las 14 filas agregadas, usando la paleta accesible Okabe-Ito."
+    </div>
+  </section>
+
+  <!-- SLIDE 10: COMPONENTE C (3/3) -->
+  <section class="slide" id="slide-10">
+    <div>
+      <div class="slide-header">
+        <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (3/3)</div>
+        <div class="slide-counter">10 / 10</div>
+      </div>
+      <h2 class="slide-title">Recomendación Cloud vs. On-Premise y Bonificación MLlib (C11)</h2>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-label">Recomendación Estratégica</div>
+        <div class="card-title">Modelo Híbrido para la CFPB</div>
+        <div class="card-body">
+          <ul>
+            <li><b>Clúster Spark On-Premise:</b> Óptimo para cargas batch masivas (15M en 26,18 s), costo marginal $0 por consulta y soberanía total de datos sensibles.</li>
+            <li><b>Google BigQuery (Serverless):</b> Benchmark de 65,8 MB en 0,8 s. Ideal para consultas ad-hoc de alta gerencia sin gestionar servidores.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card highlight">
+        <div class="card-label">Bonificación (+0,5 Puntos)</div>
+        <div class="card-title">Modelo Predictivo Spark MLlib (C11)</div>
+        <div class="metric-value emerald">0,8301 AUC</div>
+        <div class="metric-caption"><b>Exactitud Global: 99,61%.</b> Pipeline con StringIndexer, VectorAssembler y LogisticRegression distribuida entrenado en <b>41,42 segundos</b> sobre las 35 particiones.</div>
+      </div>
+
+      <div class="bento-card">
+        <div class="card-label">Impacto para la Entidad</div>
+        <div class="card-title">Capacidad de Anticipación</div>
+        <div class="card-body">
+          <ul>
+            <li>El modelo discrimina con un 83% de precisión aquellas quejas con alto riesgo de mora o respuesta tardía.</li>
+            <li>Permite a los auditores de la CFPB priorizar entidades financieras en riesgo de sanción legal antes de que venza el plazo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>Guion (Nicolas Figueroa):</b> "Recomendamos a la CFPB un modelo híbrido: mantener el clúster propio para procesamiento masivo y soberanía de datos, y habilitar BigQuery para analítica rápida. Como bonificación, entrenamos un modelo MLlib que alcanzó 0,83 de ROC-AUC y 99,6% de exactitud, permitiendo anticipar qué quejas caerán en mora regulatoria."
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
