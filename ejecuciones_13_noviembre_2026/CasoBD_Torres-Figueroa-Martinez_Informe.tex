@@ -8,26 +8,22 @@
 \singlespacing
 \pagestyle{empty}
 
-\usepackage{xcolor}
 \usepackage{titlesec}
 
-\definecolor{primary}{RGB}{15, 32, 67}
-\definecolor{secondary}{RGB}{41, 70, 115}
-
-\titleformat{\section}{\color{primary}\bfseries\fontsize{12}{13.5}\selectfont}{}{0em}{}
-\titlespacing*{\section}{0pt}{1.5pt}{0.5pt}
-\setlength{\parskip}{1pt}
+\titleformat{\section}{\bfseries\fontsize{12}{13.5}\selectfont}{}{0em}{}
+\titlespacing*{\section}{0pt}{2pt}{1pt}
+\setlength{\parskip}{1.5pt}
 \setlength{\parindent}{0pt}
 
 \begin{document}
 
 % --- ENCABEZADO EJECUTIVO LIMPIO ---
 {\centering
-    {\fontsize{12}{13.5}\selectfont \textbf{\color{primary}INFORME DE CONSULTORÍA}}\par
+    {\fontsize{13}{15}\selectfont \textbf{INFORME DE CONSULTORÍA}}\par
     \vspace{0.15em}
-    {\fontsize{10.5}{12}\selectfont \textbf{\color{secondary}Análisis de Quejas Financieras en EE.~UU. 2023 a 2026}}\par
+    {\fontsize{11}{13}\selectfont \textbf{Análisis de Quejas Financieras en EE.~UU. 2023 a 2026}}\par
 }
-\vspace{0.15em}
+\vspace{0.2em}
 
 % --- 1. CONTEXTO Y OBJETIVO ---
 \section*{\underline{1. Contexto y Objetivo de la Consultoría}}
@@ -41,16 +37,15 @@ La \textbf{Consumer Financial Protection Bureau (CFPB)} supervisa a entidades ba
 
 % --- 3. RESULTADOS CLAVE ---
 \section*{\underline{3. Resultados Clave de Auditoría}}
-\textbf{1. Cumplimiento de SLA:} Latencia media nacional de respuesta de \textbf{4,45 días}, cumpliendo en promedio el límite legal, pero con marcadas brechas operativas por producto. \\
-\textbf{2. Concentración por Producto (T1):} Reportes crediticios (\textit{Credit reporting}) y tarjetas concentran más del \textbf{70\% de las quejas}, pero con compensación económica \textbf{$<$10\%} (resolución puramente administrativa). \\
-\textbf{3. Equidad Territorial (T2):} La región \textbf{Sur (South) concentra el 40,3\%} de la litigiosidad financiera, priorizándose para inspecciones presenciales de la CFPB. \\
-\textbf{4. Eficiencia del Clúster:} Procesamiento resuelto en \textbf{26,18~s} (13,75~s T1 y 12,44~s T2). Stage 30 transfirió 62,0~MiB de shuffle y Stage 19 apenas 45,5~KiB. Se certifica \textbf{Spill (Memory y Disk) = 0~B («ninguno»)}. \\
-\textbf{5. Supervisión Preventiva (MLlib):} El clasificador \texttt{LogisticRegression} alcanzó \textbf{ROC-AUC de 0,8301} y exactitud de \textbf{99,61\%} en prueba, ofreciendo excelente anticipación de moras bancarias.
+\textbf{1. Cumplimiento de SLA:} Respuesta media de \textbf{4,45 días} (cumple la ley de 15 días); no obstante, al ser promedio, oculta variaciones y demoras atípicas por entidad y reclamo. \\
+\textbf{2. Concentración por Producto (T1):} Reportes crediticios superan el \textbf{70\% de quejas}, pero con compensación económica \textbf{$<$10\%} (casi todas se resuelven con mera explicación). \\
+\textbf{3. Foco Territorial (T2):} La región \textbf{Sur concentra el 40,3\%} de las quejas, revelando una anomalía que amerita priorizar investigaciones presenciales de la CFPB. \\
+\textbf{4. Eficiencia del Clúster:} Cómputo resuelto en \textbf{26,18~s}; el \textit{Broadcast} evitó mover los 15M de filas por red, certificando \textbf{Spill (Memory/Disk) = 0~B} (cero desborde a disco). \\
+\textbf{5. Supervisión Preventiva (MLlib):} Con \textbf{99,61\% de exactitud} y \textbf{ROC-AUC de 0,8301} (83\%), el modelo anticipa con 83\% de certeza si una queja se responderá dentro del plazo legal.
 
 % --- 4. CONCLUSIONES Y RECOMENDACIONES ---
 \section*{\underline{4. Conclusiones y Recomendaciones Estratégicas}}
 \textbf{1. Priorización Regulatoria:} Focalizar brigadas de inspección de la CFPB en burós de crédito del Sur e implementar el modelo MLlib para emitir alertas tempranas automáticas ante riesgo de mora. \\
-\textbf{2. Arquitectura Cloud/On-Premise:} Mantener Spark/HDFS \textit{on-premise} para la línea base regulatoria continua (costo fijo amortizado), integrando clústeres elásticos en nube (AWS EMR / GCP Dataproc) para absorber picos extraordinarios de quejas por fraudes masivos. \\
-\fontsize{8}{9}\selectfont\textit{*Las referencias bibliográficas en formato APA 7 y anexos técnicos se detallan en el documento de Anexos.}
+\textbf{2. Arquitectura Cloud/On-Premise:} Mantener Spark/HDFS \textit{on-premise} para la línea base regulatoria continua (costo fijo amortizado), integrando clústeres elásticos en nube (AWS EMR / GCP Dataproc) para absorber picos extraordinarios de quejas por fraudes masivos.
 
 \end{document}
