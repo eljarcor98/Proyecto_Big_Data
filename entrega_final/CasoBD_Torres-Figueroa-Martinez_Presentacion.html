@@ -215,27 +215,6 @@
       color: #0369A1;
     }
 
-    /* Speaker Notes Bar */
-    .speaker-notes {
-      background: #EFECE6;
-      border-left: 4px solid var(--accent-blue);
-      padding: 12px 18px;
-      border-radius: 6px;
-      font-size: 13.5px;
-      line-height: 1.45;
-      color: #374151;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .speaker-notes b {
-      color: #111827;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
     /* Portada Styles */
     .cover-content {
       display: flex;
@@ -295,10 +274,7 @@
       
       <p class="cover-authors">Arnold Santiago Torres Anzola<span>·</span>Alejandro Esteban Martínez Acosta<span>·</span>Nicolas Felipe Figueroa Salgado</p>
     </div>
-    <div class="speaker-notes">
-      <b>Guion del Orador:</b> "Buenas tardes profesora. Presentamos el proyecto final de consultoría para la CFPB, auditando 15 millones de quejas con Apache Spark en clúster propio de 3 nodos. La presentación está organizada estrictamente en los componentes A, B y C."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 2: COMPONENTE A (1/3) -->
   <section class="slide" id="slide-2">
@@ -343,10 +319,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Santiago Torres):</b> "En el Componente A seleccionamos el dataset oficial de la CFPB. Como el archivo crudo pesaba 5,8 GB y superaba el tope de 5 GB, podamos los años antiguos de 2011 a 2023-I, dejando 15.017.091 quejas recientes que pesan exactamente 4,6 GB. Lo publicamos en GitHub para poder transferirlo sin memorias USB."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 3: COMPONENTE A (2/3) -->
   <section class="slide" id="slide-3">
@@ -395,10 +368,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Santiago Torres):</b> "Para no llenar el disco del nodo maestro, canalizamos la descarga directamente desde la nube a HDFS por streaming en memoria con funzip. Luego aseguramos la tolerancia a fallos configurando el factor de replicación en 2.0, verificado en la captura C2 del NameNode."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 4: COMPONENTE A (3/3) -->
   <section class="slide" id="slide-4">
@@ -443,10 +413,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Santiago Torres):</b> "Auditamos el sistema de archivos con las capturas C1, C2 y C3: en el portal NameNode comprobamos los 2 DataNodes activos; y con hdfs fsck confirmamos que el dataset ocupa 35 bloques de 128 MB con estado HEALTHY y replicación media exacta de 2,0."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 5: COMPONENTE B (1/3) -->
   <section class="slide" id="slide-5">
@@ -492,10 +459,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Alejandro Martínez):</b> "En el Componente B orquestamos Spark sobre YARN con 2 ejecutores, 4 cores y 8 GB de RAM totales. Explicamos el misterio de la memoria: cada ejecutor tiene 4 GB físicos, de los cuales Spark reserva 2,2 GiB netos de Storage Memory para garantizar que el recolector de basura opere sin riesgo de colapso."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 6: COMPONENTE B (2/3) -->
   <section class="slide" id="slide-6">
@@ -540,10 +504,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Alejandro Martínez):</b> "Suprimimos el doble escaneo de HDFS definiendo un StructType explícito, lo que cargó los 15 millones de filas en 1,44 segundos. El EDA verificó que los datos se distribuyeron exactamente en 35 particiones de lectura coincidentes con los bloques de HDFS, con cero nulos en las variables de negocio."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 7: COMPONENTE B (3/3) -->
   <section class="slide" id="slide-7">
@@ -592,10 +553,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Alejandro Martínez):</b> "Ejecutamos dos transformaciones analíticas: calculamos la demora en días por producto y cruzamos territorialmente con 51 estados usando BroadcastHashJoin, eliminando el shuffle de red. En C6 mostramos el plan inicial con isFinalPlan=false y en C7 demostramos cómo AQE optimizó las particiones en tiempo de ejecución."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 8: COMPONENTE C (1/3) -->
   <section class="slide" id="slide-8">
@@ -642,10 +600,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Nicolas Figueroa):</b> "En el Componente C auditamos el rendimiento en Spark UI: el Stage 30 agrupó los 15 millones con 62 MB de shuffle en 8 segundos; y el Stage 19 ordenó los estados en 52 milisegundos. Certificamos cero derrames en disco o memoria, procesando todo el volumen en 26,18 segundos sin degradación."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 9: COMPONENTE C (2/3) -->
   <section class="slide" id="slide-9">
@@ -689,10 +644,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Nicolas Figueroa):</b> "Persistimos el DataFrame limpio con MEMORY_AND_DISK: gracias al formato binario Tungsten y la poda de texto, el peso cayó de 4,6 GB a solo 117 MiB en RAM. Para los gráficos aplicamos el patrón distribuido: procesamos en Spark y solo bajamos a Pandas las 14 filas agregadas, usando la paleta accesible Okabe-Ito."
-    </div>
-  </section>
+    </section>
 
   <!-- SLIDE 10: COMPONENTE C (3/3) -->
   <section class="slide" id="slide-10">
@@ -735,10 +687,7 @@
       </div>
     </div>
 
-    <div class="speaker-notes">
-      <b>Guion (Nicolas Figueroa):</b> "Recomendamos a la CFPB un modelo híbrido: mantener el clúster propio para procesamiento masivo y soberanía de datos, y habilitar BigQuery para analítica rápida. Como bonificación, entrenamos un modelo MLlib que alcanzó 0,83 de ROC-AUC y 99,6% de exactitud, permitiendo anticipar qué quejas caerán en mora regulatoria."
-    </div>
-  </section>
+    </section>
 
 </div>
 
