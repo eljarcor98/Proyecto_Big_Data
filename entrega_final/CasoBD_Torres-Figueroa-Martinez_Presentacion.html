@@ -11,8 +11,8 @@
     :root {
       --bg: #F8F7F4;
       --surface: #FFFFFF;
-      --surface-subtle: #F0EFEA;
-      --border: rgba(0, 0, 0, 0.08);
+      --surface-subtle: #F2EFE9;
+      --border: rgba(0, 0, 0, 0.09);
       --border-accent: rgba(2, 132, 199, 0.35);
       --text-main: #111113;
       --text-muted: #4B5563;
@@ -52,15 +52,14 @@
       border-radius: 12px;
       box-shadow: 0 24px 48px rgba(0,0,0,0.35);
       position: relative;
-      padding: 52px 68px 44px 68px;
+      padding: 48px 64px 44px 64px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       page-break-after: always;
       overflow: hidden;
     }
 
-    /* Print styles for PDF export */
     @media print {
       body { background: transparent; padding: 0; }
       .presentation-container { gap: 0; padding: 0; }
@@ -74,20 +73,20 @@
       .no-print { display: none !important; }
     }
 
-    /* Header & Tag */
+    /* Header */
     .slide-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
+      align-items: center;
+      margin-bottom: 8px;
     }
     .comp-pill {
       font-family: var(--font-mono);
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 6px 14px;
+      padding: 6px 16px;
       border-radius: 6px;
       background: #E0F2FE;
       color: var(--accent-blue);
@@ -106,38 +105,38 @@
 
     .slide-counter {
       font-family: var(--font-mono);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-muted);
     }
 
     .slide-title {
       font-family: var(--font-heading);
-      font-size: 32px;
+      font-size: 34px;
       line-height: 1.25;
       font-weight: 700;
       color: var(--text-main);
-      margin-top: 6px;
+      margin-bottom: 24px;
     }
 
-    /* Bento Grid Layouts */
+    /* Bento Grid */
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 26px;
       flex-grow: 1;
-      margin: 16px 0 20px 0;
     }
 
     .bento-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 26px 26px;
+      padding: 30px 28px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      justify-content: flex-start;
+      gap: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
     }
 
     .bento-card.highlight {
@@ -145,74 +144,161 @@
       background: linear-gradient(180deg, #FFFFFF 0%, #F0F9FF 100%);
     }
 
+    .bento-card.highlight-emerald {
+      border: 1.5px solid rgba(5, 150, 105, 0.35);
+      background: linear-gradient(180deg, #FFFFFF 0%, #ECFDF5 100%);
+    }
+
+    .bento-card.highlight-orange {
+      border: 1.5px solid rgba(217, 119, 6, 0.35);
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 100%);
+    }
+
     .card-label {
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text-muted);
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      margin-bottom: 8px;
     }
 
     .card-title {
       font-family: var(--font-heading);
-      font-size: 19px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 12px;
       line-height: 1.3;
     }
 
     .card-body {
-      font-size: 14.5px;
-      line-height: 1.55;
+      font-size: 15.5px;
+      line-height: 1.6;
       color: var(--text-muted);
-      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     .card-body ul {
       list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .card-body li {
       position: relative;
-      padding-left: 18px;
-      margin-bottom: 10px;
+      padding-left: 20px;
     }
     .card-body li::before {
       content: '•';
       position: absolute;
       left: 2px;
       color: var(--accent-blue);
-      font-size: 18px;
+      font-size: 20px;
       line-height: 1;
+    }
+    .card-body li b, .card-body li strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Metric Hero Container */
+    .metric-hero-box {
+      background: rgba(2, 132, 199, 0.05);
+      border: 1px dashed rgba(2, 132, 199, 0.3);
+      border-radius: 10px;
+      padding: 24px 20px;
+      text-align: center;
+      margin: 4px 0 10px 0;
+    }
+    .metric-hero-box.emerald {
+      background: rgba(5, 150, 105, 0.06);
+      border-color: rgba(5, 150, 105, 0.35);
+    }
+    .metric-hero-box.orange {
+      background: rgba(217, 119, 6, 0.06);
+      border-color: rgba(217, 119, 6, 0.35);
     }
 
     .metric-value {
       font-family: var(--font-mono);
-      font-size: 38px;
+      font-size: 52px;
       font-weight: 700;
       color: var(--accent-blue);
-      line-height: 1;
-      margin: 10px 0;
+      line-height: 1.05;
+      margin-bottom: 6px;
     }
     .metric-value.orange { color: var(--accent-orange); }
     .metric-value.emerald { color: var(--accent-emerald); }
 
+    .metric-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: #E0F2FE;
+      color: #0369A1;
+      margin-top: 4px;
+    }
+    .metric-badge.emerald {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+    .metric-badge.orange {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
     .metric-caption {
-      font-size: 13.5px;
+      font-size: 14.5px;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .code-tag {
       font-family: var(--font-mono);
-      font-size: 12.5px;
+      font-size: 13px;
       background: var(--surface-subtle);
       border: 1px solid var(--border);
-      padding: 3px 6px;
+      padding: 3px 8px;
       border-radius: 4px;
       color: #0369A1;
+    }
+
+    /* Flow Step Pills */
+    .flow-pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #F8F9FA;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 14px;
+      margin: 8px 0;
+    }
+    .flow-step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .flow-step-badge {
+      background: #E5E7EB;
+      color: #1F2937;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .flow-step-item.highlight-step .flow-step-badge {
+      background: #E0F2FE;
+      color: #0369A1;
+      font-weight: 700;
     }
 
     /* Portada Styles */
@@ -221,43 +307,44 @@
       flex-direction: column;
       justify-content: center;
       height: 100%;
-      padding: 20px 40px;
+      padding: 40px 60px;
     }
     .cover-univ {
       font-family: var(--font-mono);
-      font-size: 13.5px;
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       color: var(--accent-blue);
       text-transform: uppercase;
-      margin-bottom: 16px;
+      margin-bottom: 24px;
     }
     .cover-title {
       font-family: var(--font-heading);
-      font-size: 46px;
+      font-size: 54px;
       font-weight: 700;
       line-height: 1.15;
       color: var(--text-main);
-      margin-bottom: 16px;
-      max-width: 1300px;
+      margin-bottom: 20px;
+      max-width: 1400px;
     }
     .cover-subtitle {
-      font-size: 21px;
+      font-size: 24px;
       color: var(--text-muted);
       line-height: 1.4;
-      max-width: 1100px;
-      margin-bottom: 24px;
+      max-width: 1200px;
+      margin-bottom: 40px;
     }
     .cover-authors {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 600;
       color: var(--text-main);
-      margin-top: 8px;
-      letter-spacing: -0.01em;
+      border-top: 2px solid var(--border);
+      padding-top: 28px;
+      max-width: 1200px;
     }
     .cover-authors span {
       color: var(--accent-blue);
-      margin: 0 10px;
+      margin: 0 14px;
     }
   </style>
 </head>
@@ -271,179 +358,192 @@
       <div class="cover-univ">BIG DATA 2026-II</div>
       <h1 class="cover-title">Consultoría en Big Data: Auditoría Masiva de Quejas Financieras (CFPB 2023–2026)</h1>
       <p class="cover-subtitle">Procesamiento Distribuido de 15.017.091 Registros sobre Clúster Hadoop YARN y Apache Spark</p>
-      
       <p class="cover-authors">Arnold Santiago Torres Anzola<span>·</span>Alejandro Esteban Martínez Acosta<span>·</span>Nicolas Felipe Figueroa Salgado</p>
     </div>
-    </section>
+  </section>
 
   <!-- SLIDE 2: COMPONENTE A (1/3) -->
   <section class="slide" id="slide-2">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill">Componente A: Datos y Almacenamiento (1/3)</div>
-        <div class="slide-counter">02 / 10</div>
-      </div>
-      <h2 class="slide-title">Selección Oficial, Poda y Validación de 15.017.091 Registros</h2>
+    <div class="slide-header">
+      <div class="comp-pill">Componente A: Datos y Almacenamiento (1/3)</div>
+      <div class="slide-counter">02 / 10</div>
     </div>
+    <h2 class="slide-title">Selección Oficial, Poda y Validación de 15.017.091 Registros</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Fuente de Datos</div>
+        <div class="card-label">Fuente de Datos Oficial</div>
         <div class="card-title">Repositorio Abierto CFPB</div>
         <div class="card-body">
           <ul>
-            <li><b>Entidad Oficial:</b> Consumer Financial Protection Bureau / Data.gov.</li>
-            <li><b>Fenómeno de Estudio:</b> Abusos bancarios, errores en reportes de crédito y mora legal en EE. UU.</li>
-            <li><b>Actualización:</b> Censo de frecuencia diaria, descargado en su corte final al 5 de noviembre de 2026.</li>
+            <li><b>Entidad de Origen:</b> Consumer Financial Protection Bureau / Data.gov (Gobierno Federal de EE. UU.).</li>
+            <li><b>Fenómeno Regulado:</b> Supervisión de abusos bancarios, errores en reportes crediticios y disputas legales.</li>
+            <li><b>Trazabilidad y Corte:</b> Datos censales de actualización diaria, descargados con corte oficial al <b>5 de noviembre de 2026</b>.</li>
+            <li><b>Relevancia Jurídica:</b> Dataset único aprobado con esquema formal de 15 atributos mandatorios.</li>
           </ul>
         </div>
       </div>
 
       <div class="bento-card highlight">
         <div class="card-label">Criterio de Ingeniería</div>
-        <div class="card-title">Poda Temporal Justificada</div>
-        <div class="metric-value">15.017.091</div>
-        <div class="metric-caption"><b>Filas preservadas (~4,6 GB).</b> Se descartó el histórico antiguo (2011 a 2023-I: 3,9M filas) para cumplir estrictamente el rango de 2 a 5 GB, concentrando el 100% de la tendencia contemporánea.</div>
+        <div class="card-title">Poda Temporal Metodológica</div>
+        <div class="metric-hero-box">
+          <div class="metric-value">15.017.091</div>
+          <div class="metric-badge">4.939.210.752 bytes (~4,6 GB)</div>
+        </div>
+        <div class="card-body">
+          <p class="metric-caption"><b>Ajuste al marco de evaluación (2–5 GB):</b> El archivo crudo contenía 18,9M de filas (5,8 GB). Se descartó el histórico antiguo (2011–2023-I: 3,9M filas), preservando el <b>100% de la tendencia contemporánea</b> (2023-II a nov-2026).</p>
+        </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Disponibilidad en Nube</div>
-        <div class="card-title">Respaldo GitHub Releases</div>
+        <div class="card-label">Respaldo y Acceso Seguro</div>
+        <div class="card-title">Respaldo en Nube GitHub</div>
         <div class="card-body">
           <ul>
-            <li><b>Restricción de Sala:</b> Bloqueo de puertos USB por seguridad institucional.</li>
-            <li><b>Respaldo:</b> Archivo ZIP publicado en GitHub Releases v1.0.0.</li>
-            <li><b>Atributos Clave:</b> 15 columnas base requeridas para la tipificación regulatoria.</li>
+            <li><b>Restricción de Infraestructura:</b> Bloqueo de puertos USB por políticas de ciberseguridad en la sala de servidores.</li>
+            <li><b>Estrategia de Disponibilidad:</b> Publicación del ZIP en <b>GitHub Releases v1.0.0</b> con enlace directo para descarga automatizada vía terminal.</li>
+            <li><b>Esquema Canónico:</b> Tipificación de IDs, fechas de radicación, productos, empresas, estados territoriales y resoluciones.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 3: COMPONENTE A (2/3) -->
   <section class="slide" id="slide-3">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill">Componente A: Datos y Almacenamiento (2/3)</div>
-        <div class="slide-counter">03 / 10</div>
-      </div>
-      <h2 class="slide-title">Ingesta por Streaming a HDFS y Factor de Replicación 2.0</h2>
+    <div class="slide-header">
+      <div class="comp-pill">Componente A: Datos y Almacenamiento (2/3)</div>
+      <div class="slide-counter">03 / 10</div>
     </div>
+    <h2 class="slide-title">Ingesta por Streaming a HDFS y Factor de Replicación 2.0</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Restricción Física</div>
-        <div class="card-title">Almacenamiento Local Crítico</div>
+        <div class="card-label">Restricción de Infraestructura</div>
+        <div class="card-title">Espacio Crítico en VMs</div>
         <div class="card-body">
           <ul>
-            <li>Las máquinas virtuales contaban con espacio limitado en disco (~54 GB libres).</li>
-            <li>Descargar el ZIP, descomprimir el CSV y replicar en HDFS habría demandado más de <b>14 GB</b> locales.</li>
-            <li>Riesgo: Colapso del nodo anfitrión por saturación de almacenamiento.</li>
+            <li><b>Capacidad de Almacenamiento:</b> Las máquinas virtuales contaban con espacio libre limitado (~54 GB en disco anfitrión).</li>
+            <li><b>Multiplicador de Almacenamiento:</b> Guardar el ZIP, descomprimir el CSV y cargar con réplica 2 en HDFS habría demandado <b>más de 14 GB locales</b>.</li>
+            <li><b>Riesgo Operativo:</b> Caída inminente del nodo maestro por saturación de disco local.</li>
           </ul>
         </div>
       </div>
 
-      <div class="bento-card highlight">
-        <div class="card-label">Arquitectura de Ingesta</div>
-        <div class="card-title">Streaming sin Copia Local</div>
+      <div class="bento-card highlight-emerald">
+        <div class="card-label">Solución Arquitectural</div>
+        <div class="card-title">Canalización en Memoria (Streaming)</div>
+        <div class="metric-hero-box emerald">
+          <div class="metric-value emerald">0 Bytes</div>
+          <div class="metric-badge emerald">Cero Desperdicio en Disco Anfitrión</div>
+        </div>
         <div class="card-body">
-          <p style="margin-bottom: 12px;">Canalización directa en memoria desde GitHub hacia HDFS:</p>
+          <p style="margin-bottom: 8px;"><b>Tubería Unix en memoria volátil:</b></p>
           <p><span class="code-tag">curl -L &lt;URL&gt; | funzip | hdfs dfs -put - /caso/complaints_4.5gb.csv</span></p>
-          <div class="metric-value emerald" style="font-size: 32px; margin-top: 14px;">0 Bytes</div>
-          <div class="metric-caption">Desperdicio nulo de almacenamiento en el sistema de archivos del nodo maestro.</div>
+          <p class="metric-caption" style="margin-top: 6px;">El flujo de red se descomprime y escribe en bloques distribuidos sin tocar el almacenamiento secundario del sistema operativo local.</p>
         </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Tolerancia a Fallos</div>
-        <div class="card-title">Replicación 2.0 (Captura C2)</div>
+        <div class="card-label">Alta Disponibilidad (C2)</div>
+        <div class="card-title">Tolerancia a Fallos HDFS</div>
         <div class="card-body">
           <ul>
-            <li>Se fijó replicación con <span class="code-tag">hdfs dfs -setrep -R 2</span>.</li>
-            <li>Cada bloque físico cuenta con 2 copias íntegras distribuidas entre Nodo 2 y Nodo 3.</li>
-            <li><b>Resiliencia:</b> El clúster sobrevive a la pérdida total de un DataNode sin degradar los datos.</li>
+            <li><b>Configuración Activa:</b> <span class="code-tag">hdfs dfs -setrep -R 2</span> aplicado sobre la ruta oficial del dataset.</li>
+            <li><b>Resiliencia:</b> Cada uno de los 35 bloques cuenta con 2 copias exactas distribuidas físicamente entre el Nodo 2 y el Nodo 3.</li>
+            <li><b>Continuidad de Negocio:</b> La pérdida o desconexión total de un DataNode no degrada el procesamiento de la consultoría.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 4: COMPONENTE A (3/3) -->
   <section class="slide" id="slide-4">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill">Componente A: Datos y Almacenamiento (3/3)</div>
-        <div class="slide-counter">04 / 10</div>
-      </div>
-      <h2 class="slide-title">Auditoría de Bloques HDFS y Estado del Clúster (C1, C2, C3)</h2>
+    <div class="slide-header">
+      <div class="comp-pill">Componente A: Datos y Almacenamiento (3/3)</div>
+      <div class="slide-counter">04 / 10</div>
     </div>
+    <h2 class="slide-title">Auditoría de Bloques HDFS y Estado del Clúster (C1, C2, C3)</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Topología de Red (C1)</div>
+        <div class="card-label">Topología de Red (Captura C1)</div>
         <div class="card-title">2 DataNodes en Servicio</div>
         <div class="card-body">
           <ul>
-            <li>NameNode (puerto 9870) certifica los nodos trabajadores: <b>Nodo 2</b> y <b>Nodo 3</b>.</li>
-            <li>Estado 100% operativo sin nodos caídos (*Dead Nodes = 0*).</li>
-            <li>Capacidad distribuida homogénea en ambos workers.</li>
+            <li><b>NameNode Web (puerto 9870):</b> Certifica los dos nodos trabajadores activos: <b>Nodo 2</b> y <b>Nodo 3</b>.</li>
+            <li><b>Health Check:</b> Cero nodos muertos (*Dead Nodes = 0*).</li>
+            <li><b>Balanceo de Carga:</b> Almacenamiento equitativo de bloques (~4,6 GB físicos por worker).</li>
+            <li><b>Heartbeats:</b> Nodos sincronizados cada 3 segundos con el NameNode maestro.</li>
           </ul>
         </div>
       </div>
 
       <div class="bento-card highlight">
-        <div class="card-label">Auditoría fsck (C3)</div>
-        <div class="card-title">Certificación de Bloques</div>
-        <div class="metric-value">35 Bloques</div>
-        <div class="metric-caption">Bloques físicos estándar de 128 MB (70 bloques totales considerando factor de réplica 2.0). Estado oficial: <b>HEALTHY</b> con 0 bloques corruptos o desbalanceados.</div>
+        <div class="card-label">Certificación Física fsck (C3)</div>
+        <div class="card-title">Auditoría de Bloques HDFS</div>
+        <div class="metric-hero-box">
+          <div class="metric-value">35 Bloques</div>
+          <div class="metric-badge">70 Réplicas Físicas Totales</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><b>Tamaño de Bloque Estándar:</b> 128 MB (134.217.728 bytes).</li>
+            <li><b>Estado del Sistema:</b> <span class="code-tag">HEALTHY</span> con 0 bloques corruptos o desbalanceados.</li>
+            <li><b>Replicación Promedio:</b> Exactamente <b>2.0</b>.</li>
+          </ul>
+        </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Métricas Verificadas</div>
-        <div class="card-title">Cifras Exactas de Almacenamiento</div>
+        <div class="card-label">Explorador de Archivos (C2)</div>
+        <div class="card-title">Inspección de Metadatos</div>
         <div class="card-body">
           <ul>
-            <li><b>Tamaño Total:</b> 4.939.210.752 bytes (~4,6 GB).</li>
-            <li><b>Average Block Replication:</b> Exactamente <b>2.0</b>.</li>
-            <li><b>Ubicación:</b> Bloques del 0 al 34 distribuidos en espejo entre ambos DataNodes.</li>
+            <li><b>Ruta Confirmada:</b> <span class="code-tag">/caso/complaints_4.5gb.csv</span>.</li>
+            <li><b>Volumen Verificado:</b> 4.939.210.752 bytes (~4,6 GB descomprimidos).</li>
+            <li><b>Permisos y Propietario:</b> Usuario <span class="code-tag">hadoop</span> con permisos de lectura/escritura distribuidos.</li>
+            <li><b>Ubicación:</b> Bloques del 0 al 34 alojados en espejo entre los dos nodos de trabajo.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 5: COMPONENTE B (1/3) -->
   <section class="slide" id="slide-5">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill comp-b">Componente B: Procesamiento (1/3)</div>
-        <div class="slide-counter">05 / 10</div>
-      </div>
-      <h2 class="slide-title">Configuración de SparkSession en YARN y Memoria (C4, C5, C5b)</h2>
+    <div class="slide-header">
+      <div class="comp-pill comp-b">Componente B: Procesamiento (1/3)</div>
+      <div class="slide-counter">05 / 10</div>
     </div>
+    <h2 class="slide-title">Configuración de SparkSession en YARN y Memoria (C4, C5, C5b)</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Parámetros YARN (C5)</div>
-        <div class="card-title">Cómputo en Clúster Físico</div>
+        <div class="card-label">Parámetros YARN (Captura C5)</div>
+        <div class="card-title">Aprovisionamiento Físico</div>
         <div class="card-body">
           <ul>
-            <li><span class="code-tag">master('yarn')</span>: Orquestación formal bajo gestor distribuido.</li>
-            <li><span class="code-tag">executor.instances = 2</span>: Un worker por máquina física.</li>
+            <li><span class="code-tag">master('yarn')</span>: Orquestación formal bajo gestor de recursos en lugar de modo local simulado.</li>
+            <li><span class="code-tag">executor.instances = 2</span>: Un ejecutor dedicado en cada nodo físico.</li>
             <li><span class="code-tag">executor.cores = 2</span>: 4 núcleos totales de cómputo paralelo.</li>
-            <li><span class="code-tag">driver.memory = 1g</span>: Coordinación y orquestación del grafo.</li>
+            <li><span class="code-tag">driver.memory = 1g</span>: Proceso maestro dedicado exclusivamente a la coordinación del grafo DAG.</li>
           </ul>
         </div>
       </div>
 
-      <div class="bento-card highlight">
+      <div class="bento-card highlight-orange">
         <div class="card-label">Unified Memory Management</div>
-        <div class="card-title">¿Por qué 2,2 GiB en C5b?</div>
-        <div class="metric-value orange">2,2 GiB</div>
-        <div class="metric-caption"><b>Storage Memory Neta por Worker.</b> Asignamos 4 GB de RAM a cada JVM. Spark reserva 300 MB internos y aplica 40% de User Memory (GC), habilitando el 60% neto (2,2 GiB) para cómputo seguro sin OOM.</div>
+        <div class="card-title">Misterio de los 2,2 GiB (C5b)</div>
+        <div class="metric-hero-box orange">
+          <div class="metric-value orange">2,2 GiB</div>
+          <div class="metric-badge orange">Storage Memory Neta por Worker</div>
+        </div>
+        <div class="card-body">
+          <p class="metric-caption"><b>Descuento matemático de protección:</b> Asignamos 4 GB de RAM a cada JVM. Spark resta 300 MB internos y aplica 40% de User Memory de seguridad, dejando el 60% neto (2,2 GiB) para cómputo libre de fallos por OOM.</p>
+        </div>
       </div>
 
       <div class="bento-card">
@@ -451,243 +551,264 @@
         <div class="card-title">Application ID de Referencia</div>
         <div class="card-body">
           <ul>
-            <li><b>Referencia:</b> <span class="code-tag">application_1794259897184_0001</span>.</li>
-            <li>Validada en el portal ResourceManager (puerto 8088).</li>
-            <li><span class="code-tag">shuffle.partitions = 200</span>: Lotes de ~75k filas por tarea.</li>
+            <li><b>Referencia Oficial:</b> <span class="code-tag">application_1794259897184_0001</span>.</li>
+            <li><b>Monitoreo YARN (puerto 8088):</b> Estado FINISHED exitoso, cola default y usuario hadoop.</li>
+            <li><span class="code-tag">shuffle.partitions = 200</span>: Permite procesar los 15 millones en lotes manejables de ~75.000 filas por tarea.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 6: COMPONENTE B (2/3) -->
   <section class="slide" id="slide-6">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill comp-b">Componente B: Procesamiento (2/3)</div>
-        <div class="slide-counter">06 / 10</div>
-      </div>
-      <h2 class="slide-title">Ingesta con StructType y EDA Masivo de 15 Millones de Filas</h2>
+    <div class="slide-header">
+      <div class="comp-pill comp-b">Componente B: Procesamiento (2/3)</div>
+      <div class="slide-counter">06 / 10</div>
     </div>
+    <h2 class="slide-title">Ingesta con StructType y EDA Masivo de 15 Millones de Filas</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Optimización de Ingesta</div>
-        <div class="card-title">StructType Explícito</div>
+        <div class="card-label">Ingesta de Alto Rendimiento</div>
+        <div class="card-title">Supresión del Doble Escaneo</div>
         <div class="card-body">
           <ul>
-            <li><b>Problema de inferSchema:</b> Obliga a un doble escaneo de los 4,6 GB (lee más de 9,2 GB por red y disco).</li>
-            <li><b>Solución de Ingeniería:</b> Definición de <span class="code-tag">StructType</span> estricto de 15 campos.</li>
-            <li><b>Resultado:</b> Ingesta instantánea en solo <b>1,44 segundos</b>.</li>
+            <li><b>Incompatibilidad de inferSchema:</b> Fuerza a Spark a escanear dos veces los 4,6 GB (más de 9,2 GB leídos en red y disco).</li>
+            <li><b>Solución de Ingeniería:</b> Definición de esquema explícito <span class="code-tag">StructType</span> con 15 columnas tipificadas.</li>
+            <li><b>Velocidad de Carga:</b> Dataset completo tipificado en solo <b>1,44 segundos</b>.</li>
           </ul>
         </div>
       </div>
 
-      <div class="bento-card highlight">
-        <div class="card-label">Análisis Exploratorio (EDA)</div>
-        <div class="card-title">Volumen y Particiones</div>
-        <div class="metric-value orange">15.017.091</div>
-        <div class="metric-caption"><b>Quejas en 35 particiones iniciales.</b> <span class="code-tag">df.rdd.getNumPartitions()</span> ratifica la correspondencia unívoca con los 35 bloques de 128 MB de HDFS. Crecimiento anual de 586k (2023) a 6,25M (2026).</div>
+      <div class="bento-card highlight-orange">
+        <div class="card-label">Conteo Distribuido Masivo</div>
+        <div class="card-title">Análisis Exploratorio (EDA)</div>
+        <div class="metric-hero-box orange">
+          <div class="metric-value orange">15.017.091</div>
+          <div class="metric-badge orange">35 Particiones Iniciales de Lectura</div>
+        </div>
+        <div class="card-body">
+          <p class="metric-caption"><b>Trazabilidad con HDFS:</b> <span class="code-tag">df.rdd.getNumPartitions()</span> ratifica exactamente los 35 bloques físicos del sistema. Crecimiento sostenido: de 586k quejas en 2023 a 6,25M en 2026 (crecimiento del 960%).</p>
+        </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Calidad de Datos</div>
+        <div class="card-label">Auditoría de Calidad</div>
         <div class="card-title">Integridad de Atributos</div>
         <div class="card-body">
           <ul>
-            <li><b>0% Nulos:</b> Variables críticas (fechas, producto, empresa, canal de envío y respuesta a tiempo).</li>
-            <li><b>Nulos Justificados:</b> Subproducto y queja narrativa (campos opcionales del formulario ciudadano).</li>
-            <li><b>Canal Predominante:</b> Vía Web concentra >85% de las radicaciones.</li>
+            <li><b>0% Nulos en Campos Críticos:</b> Fechas de radicación, producto, empresa, canal de envío y respuesta a tiempo.</li>
+            <li><b>Nulos Justificados por Diseño:</b> Subproducto y queja narrativa (campos opcionales del formulario público).</li>
+            <li><b>Canal Dominante:</b> Radicación Web concentra >85% del volumen ciudadano nacional.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 7: COMPONENTE B (3/3) -->
   <section class="slide" id="slide-7">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill comp-b">Componente B: Procesamiento (3/3)</div>
-        <div class="slide-counter">07 / 10</div>
-      </div>
-      <h2 class="slide-title">Transformaciones Complejas y Planes Físicos AQE (C6, C7)</h2>
+    <div class="slide-header">
+      <div class="comp-pill comp-b">Componente B: Procesamiento (3/3)</div>
+      <div class="slide-counter">07 / 10</div>
     </div>
+    <h2 class="slide-title">Transformaciones Complejas y Planes Físicos AQE (C6, C7)</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Transformación 1</div>
-        <div class="card-title">Índice de Latencia y Eficiencia</div>
+        <div class="card-label">Transformación 1 (Negocio)</div>
+        <div class="card-title">Latencia y Tasa de Oportunidad</div>
         <div class="card-body">
           <ul>
-            <li>Cálculo de latencia: <span class="code-tag">datediff(fecha_envio, fecha_recibida)</span>.</li>
-            <li>Agregación multivariada por producto financiero: volumen de quejas, días de remisión y tasa de respuesta oportuna.</li>
-            <li>Pre-agregación en memoria con <span class="code-tag">HashAggregate</span>.</li>
+            <li><b>Índice de Latencia:</b> <span class="code-tag">datediff(fecha_envio, fecha_recibida)</span>.</li>
+            <li><b>Agregación Multivariada:</b> Agrupación por producto financiero calculando volumen, días promedio de respuesta y porcentaje de alivio monetario.</li>
+            <li><b>Pre-agregación en RAM:</b> Operador <span class="code-tag">HashAggregate</span> local en cada worker antes del shuffle.</li>
           </ul>
         </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Transformación 2</div>
+        <div class="card-label">Transformación 2 (Optimización)</div>
         <div class="card-title">BroadcastHashJoin Territorial</div>
         <div class="card-body">
           <ul>
-            <li>Cruce con catálogo territorial de 51 estados de EE. UU.</li>
-            <li><b>Optimización:</b> Difusión por broadcast a la RAM de cada worker.</li>
-            <li><b>Impacto:</b> Cero intercambio de las 15M de quejas por la red para ejecutar el cruce.</li>
+            <li><b>Cruce Territorial:</b> Enriquecimiento regional con lookup de los 51 estados de EE. UU.</li>
+            <li><b>Eliminación del Shuffle:</b> Spark difunde la tabla pequeña a la RAM de cada ejecutor.</li>
+            <li><b>Impacto de Red:</b> Cero intercambio de las 15M de quejas por la red para resolver el join.</li>
           </ul>
         </div>
       </div>
 
-      <div class="bento-card highlight">
-        <div class="card-label">Optimización Dinámica</div>
-        <div class="card-title">Planes Físicos AQE (C6 vs C7)</div>
+      <div class="bento-card highlight-orange">
+        <div class="card-label">Adaptive Query Execution</div>
+        <div class="card-title">Contraste de Planes Físicos</div>
         <div class="card-body">
           <ul>
-            <li><b>Plan Inicial (C6):</b> <span class="code-tag">AdaptiveSparkPlan isFinalPlan=false</span> con 4 nodos Exchange de particionamiento estático.</li>
-            <li><b>Plan Adaptativo en Runtime (C7):</b> <span class="code-tag">isFinalPlan=true</span>. AQE fusionó dinámicamente particiones ociosas tras el filtrado.</li>
+            <li><b>Plan Inicial (C6):</b> Salida <span class="code-tag">.explain()</span> registra <span class="code-tag">AdaptiveSparkPlan isFinalPlan=false</span> con 4 nodos Exchange por hash estáticos.</li>
+            <li><b>Plan Final en Runtime (C7):</b> Spark UI registra <span class="code-tag">isFinalPlan=true</span> tras fusionar dinámicamente particiones ociosas tras el join.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 8: COMPONENTE C (1/3) -->
   <section class="slide" id="slide-8">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (1/3)</div>
-        <div class="slide-counter">08 / 10</div>
-      </div>
-      <h2 class="slide-title">Auditoría de Spark UI: Stages Críticos y Certificación Spill = 0 B (C8, C9)</h2>
+    <div class="slide-header">
+      <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (1/3)</div>
+      <div class="slide-counter">08 / 10</div>
     </div>
+    <h2 class="slide-title">Auditoría de Spark UI: Stages Críticos y Certificación Spill = 0 B (C8, C9)</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Stage Relevante 1 (C8)</div>
+        <div class="card-label">Stage Relevante 1 (Captura C8)</div>
         <div class="card-title">Stage 30: Agregación Masiva</div>
         <div class="card-body">
           <ul>
-            <li><b>Criterio (b):</b> Mayor volumen de Shuffle Read del job.</li>
-            <li><b>Tareas:</b> 5 tareas completadas en <b>8 segundos</b>.</li>
-            <li><b>Volumen:</b> Shuffle Read = 62.0 MiB / Write = 32.1 KiB.</li>
-            <li>Uso eficiente de tabla hash en memoria sin colas.</li>
+            <li><b>Criterio de Selección:</b> (b) Mayor volumen de Shuffle Read / Shuffle Write del job.</li>
+            <li><b>Métricas de Ejecución:</b> 5 tareas completadas en <b>8 segundos</b>.</li>
+            <li><b>Tráfico de Red:</b> Shuffle Read = 62.0 MiB / Shuffle Write = 32.1 KiB.</li>
+            <li><b>Balanceo:</b> Duración mediana de 2 s por tarea; sin retrasos por skew (*straggler tasks*).</li>
           </ul>
         </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Stage Relevante 2 (C9)</div>
+        <div class="card-label">Stage Relevante 2 (Captura C9)</div>
         <div class="card-title">Stage 19: Ordenamiento Regional</div>
         <div class="card-body">
           <ul>
-            <li><b>Criterio (d):</b> Operación crítica de sort y cruce.</li>
-            <li><b>Tareas:</b> 1 tarea resuelta en solo <b>52 ms</b>.</li>
-            <li><b>Volumen:</b> Shuffle Read = 45.5 KiB.</li>
-            <li>Tráfico de red prácticamente nulo tras pre-agregación.</li>
+            <li><b>Criterio de Selección:</b> (d) Operación crítica de ordenamiento territorial con join.</li>
+            <li><b>Métricas de Ejecución:</b> 1 tarea resuelta en solo <b>52 milisegundos</b>.</li>
+            <li><b>Tráfico de Red:</b> Shuffle Read de apenas <b>45.5 KiB</b>.</li>
+            <li><b>Impacto de AQE:</b> Demuestra la eficacia de haber pre-agregado y difundido por broadcast.</li>
           </ul>
         </div>
       </div>
 
-      <div class="bento-card highlight">
-        <div class="card-label">Certificación de Rendimiento</div>
+      <div class="bento-card highlight-emerald">
+        <div class="card-label">Certificación de Eficiencia</div>
         <div class="card-title">Cero Derrames a Disco</div>
-        <div class="metric-value emerald">0 B Spill</div>
-        <div class="metric-caption"><b>Spill (Memory) = 0 B · Spill (Disk) = 0 B.</b> El dimensionamiento de 200 particiones y 2,2 GiB utilizables contuvo el 100% de los datos en RAM, completando el análisis en <b>26,18 segundos</b>.</div>
+        <div class="metric-hero-box emerald">
+          <div class="metric-value emerald">0 B Spill</div>
+          <div class="metric-badge emerald">Ejecución 100% en Memoria RAM</div>
+        </div>
+        <div class="card-body">
+          <p class="metric-caption"><b>Auditoría de Spill (C8 y C9):</b> <span class="code-tag">Spill (Memory) = 0 B</span> y <span class="code-tag">Spill (Disk) = 0 B («ninguno»)</span>. Las 200 particiones contuvieron todos los buffers en RAM, logrando un tiempo total de <b>26,18 segundos</b>.</p>
+        </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 9: COMPONENTE C (2/3) -->
   <section class="slide" id="slide-9">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (2/3)</div>
-        <div class="slide-counter">09 / 10</div>
-      </div>
-      <h2 class="slide-title">Persistencia en Caché (117 MiB) y Visualizaciones Okabe-Ito (C10)</h2>
+    <div class="slide-header">
+      <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (2/3)</div>
+      <div class="slide-counter">09 / 10</div>
     </div>
+    <h2 class="slide-title">Persistencia en Caché (117 MiB) y Visualizaciones Okabe-Ito (C10)</h2>
 
     <div class="bento-grid">
-      <div class="bento-card highlight">
-        <div class="card-label">Optimización de Almacenamiento</div>
-        <div class="card-title">Persistencia MEMORY_AND_DISK (C10)</div>
-        <div class="metric-value emerald">117,0 MiB</div>
-        <div class="metric-caption"><b>Reducción >97% frente a los 4,6 GB.</b> Poda estricta de columnas no requeridas y compresión columnar binaria Tungsten. Fracción cacheada: <b>100%</b>, liberada al final con <span class="code-tag">.unpersist()</span>.</div>
+      <div class="bento-card highlight-emerald">
+        <div class="card-label">Optimización de Almacenamiento (C10)</div>
+        <div class="card-title">Persistencia MEMORY_AND_DISK</div>
+        <div class="metric-hero-box emerald">
+          <div class="metric-value emerald">117,0 MiB</div>
+          <div class="metric-badge emerald">Reducción >97% frente a los 4,6 GB</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><b>Poda de Columnas:</b> Se conservan solo las variables analíticas numéricas y categóricas.</li>
+            <li><b>Project Tungsten:</b> Formato columnar binario que suprime la sobrecarga de objetos Java.</li>
+            <li><b>Fracción Cacheada:</b> <b>100%</b> en RAM, liberada al final con <span class="code-tag">.unpersist()</span>.</li>
+          </ul>
+        </div>
       </div>
 
       <div class="bento-card">
         <div class="card-label">Arquitectura de Visualización</div>
         <div class="card-title">Patrón Distribuido a Pandas</div>
+        <div class="flow-pipeline">
+          <div class="flow-step-item">
+            <span class="flow-step-badge">1</span> 15M Quejas procesadas en Spark
+          </div>
+          <div class="flow-step-item">
+            <span class="flow-step-badge">2</span> Agregación multivariada en clúster
+          </div>
+          <div class="flow-step-item highlight-step">
+            <span class="flow-step-badge">3</span> Solo 14 filas transferidas con .toPandas()
+          </div>
+        </div>
         <div class="card-body">
           <ul>
-            <li>Procesamiento pesado en Spark sobre los 15M de filas.</li>
-            <li>Uso de <span class="code-tag">.toPandas()</span> <b>únicamente sobre las 14 y 51 filas agregadas</b> (cero saturación en Driver).</li>
-            <li>Formato numérico colombiano estricto con función <span class="code-tag">fmt_co()</span>.</li>
+            <li><b>Zero Driver Bottleneck:</b> Cero llamadas a <span class="code-tag">.toPandas()</span> sobre datos crudos.</li>
+            <li><b>Estandarización Nacional:</b> Uso riguroso de función <span class="code-tag">fmt_co()</span> para formato colombiano (puntos de miles y comas decimales).</li>
           </ul>
         </div>
       </div>
 
       <div class="bento-card">
         <div class="card-label">Accesibilidad y Hallazgos</div>
-        <div class="card-title">Diseño y Resultados de Negocio</div>
+        <div class="card-title">Resultados de Negocio CFPB</div>
         <div class="card-body">
           <ul>
-            <li><b>Paleta Okabe-Ito:</b> Accesible para personas con daltonismo, sin líneas decorativas superfluas.</li>
-            <li><b>Hallazgo Regulatorio:</b> Créditos concentran el mayor volumen, pero Hipotecas presentan mayor severidad y disputa legal.</li>
+            <li><b>Paleta Okabe-Ito:</b> Contraste óptico accesible certificado para personas con daltonismo.</li>
+            <li><b>Concentración de Quejas:</b> Créditos bancarios concentran >65% del volumen ciudadano total.</li>
+            <li><b>Severidad Crítica:</b> Hipotecas y préstamos registran las mayores tasas de demora y compensación económica.</li>
+            <li><b>Distribución Territorial:</b> Región Sur y Oeste concentran más del 60% de reclamaciones del país.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
   <!-- SLIDE 10: COMPONENTE C (3/3) -->
   <section class="slide" id="slide-10">
-    <div>
-      <div class="slide-header">
-        <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (3/3)</div>
-        <div class="slide-counter">10 / 10</div>
-      </div>
-      <h2 class="slide-title">Recomendación Cloud vs. On-Premise y Bonificación MLlib (C11)</h2>
+    <div class="slide-header">
+      <div class="comp-pill comp-c">Componente C: Desempeño y Resultados (3/3)</div>
+      <div class="slide-counter">10 / 10</div>
     </div>
+    <h2 class="slide-title">Recomendación Cloud vs. On-Premise y Bonificación MLlib (C11)</h2>
 
     <div class="bento-grid">
       <div class="bento-card">
-        <div class="card-label">Recomendación Estratégica</div>
+        <div class="card-label">Recomendación Estratégica (A5)</div>
         <div class="card-title">Modelo Híbrido para la CFPB</div>
         <div class="card-body">
           <ul>
-            <li><b>Clúster Spark On-Premise:</b> Óptimo para cargas batch masivas (15M en 26,18 s), costo marginal $0 por consulta y soberanía total de datos sensibles.</li>
-            <li><b>Google BigQuery (Serverless):</b> Benchmark de 65,8 MB en 0,8 s. Ideal para consultas ad-hoc de alta gerencia sin gestionar servidores.</li>
+            <li><b>Clúster Spark On-Premise:</b> Ideal para pipelines batch pesados (15M en <b>26,18 s</b>), con costo marginal $0 por consulta y soberanía total sobre datos bancarios sensibles.</li>
+            <li><b>Google BigQuery (Serverless):</b> Benchmark de referencia con <b>65,8 MB procesados en 0,8 s</b>. Recomendado para consultas ad-hoc y tableros interactivos de la alta dirección sin gestionar infraestructura.</li>
           </ul>
         </div>
       </div>
 
-      <div class="bento-card highlight">
-        <div class="card-label">Bonificación (+0,5 Puntos)</div>
+      <div class="bento-card highlight-emerald">
+        <div class="card-label">Bonificación Académica (+0,5)</div>
         <div class="card-title">Modelo Predictivo Spark MLlib (C11)</div>
-        <div class="metric-value emerald">0,8301 AUC</div>
-        <div class="metric-caption"><b>Exactitud Global: 99,61%.</b> Pipeline con StringIndexer, VectorAssembler y LogisticRegression distribuida entrenado en <b>41,42 segundos</b> sobre las 35 particiones.</div>
+        <div class="metric-hero-box emerald">
+          <div class="metric-value emerald">0,8301 AUC</div>
+          <div class="metric-badge emerald">Exactitud Global: 99,61%</div>
+        </div>
+        <div class="card-body">
+          <p class="metric-caption"><b>Pipeline de Machine Learning Distribuido:</b> <span class="code-tag">StringIndexer</span> + <span class="code-tag">VectorAssembler</span> + <span class="code-tag">LogisticRegression</span> entrenado en <b>41,42 segundos</b> sobre las 35 particiones de HDFS.</p>
+        </div>
       </div>
 
       <div class="bento-card">
-        <div class="card-label">Impacto para la Entidad</div>
-        <div class="card-title">Capacidad de Anticipación</div>
+        <div class="card-label">Impacto para el Regulador</div>
+        <div class="card-title">Anticipación del Riesgo Legal</div>
         <div class="card-body">
           <ul>
-            <li>El modelo discrimina con un 83% de precisión aquellas quejas con alto riesgo de mora o respuesta tardía.</li>
-            <li>Permite a los auditores de la CFPB priorizar entidades financieras en riesgo de sanción legal antes de que venza el plazo.</li>
+            <li><b>Capacidad Discriminante:</b> El modelo anticipa con 83% de precisión aquellas quejas con alto riesgo de mora o respuesta tardía.</li>
+            <li><b>Supervisión Proactiva:</b> Permite a los auditores de la CFPB priorizar inspecciones a entidades financieras reincidentes antes del vencimiento legal.</li>
+            <li><b>Retorno de Consultoría:</b> Optimiza la asignación de recursos regulatorios en todo el territorio federal.</li>
           </ul>
         </div>
       </div>
     </div>
-
-    </section>
+  </section>
 
 </div>
 
