@@ -1,0 +1,63 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage{mathptmx}
+\usepackage{setspace}
+\singlespacing
+\pagestyle{empty}
+
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+\definecolor{primary}{RGB}{15, 32, 67}
+\definecolor{secondary}{RGB}{41, 70, 115}
+
+\titleformat{\section}{\color{primary}\bfseries\fontsize{11}{12}\selectfont}{}{0em}{}
+\titlespacing*{\section}{0pt}{2.5pt}{1pt}
+\setlength{\parskip}{1.5pt}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\enlargethispage{3.5\baselineskip}
+
+% --- ENCABEZADO EJECUTIVO COMPACTO ---
+\begin{center}
+    {\fontsize{11.5}{13}\selectfont \textbf{\color{primary}INFORME DE CONSULTORÍA EN BIG DATA}} \\[0.05em]
+    {\fontsize{9.5}{11}\selectfont \textbf{\color{secondary}Supervisión y Análisis Distribuido de Quejas Financieras en EE.~UU. (2023--2026)}} \\[0.15em]
+    \rule{\textwidth}{0.8pt} \\[0.1em]
+    \fontsize{8.5}{9.5}\selectfont
+    \textbf{Cliente:} Consumer Financial Protection Bureau (CFPB) $\cdot$ \textbf{Fecha:} Noviembre de 2026 $\cdot$ \textbf{Grupo:} MABD02 \\
+    \textbf{Consultores:} Arnold Santiago Torres Anzola, Alejandro Esteban Martínez Acosta, Nicolas Felipe Figueroa Salgado \\
+    \textbf{Asignatura:} Big Data (2026-II) $\cdot$ Universidad Externado de Colombia $\cdot$ \textbf{Docente:} Yessica Liceth Velásquez C. \\
+    \rule{\textwidth}{0.4pt}
+\end{center}
+
+\vspace{-0.9em}
+
+% --- 1. CONTEXTO Y OBJETIVO ---
+\section*{\underline{1. Contexto y Objetivo de Negocio}}
+La \textbf{Consumer Financial Protection Bureau (CFPB)} supervisa a entidades bancarias y burós de crédito en EE.~UU. para velar por el cumplimiento del plazo legal de respuesta al consumidor (SLA de 15 días). Ante el crecimiento del registro a \textbf{15.017.091 quejas ($\sim$4,6~GB)}, los sistemas tradicionales colapsaron en latencia. La consultoría implementó una arquitectura de procesamiento distribuido por lotes (\textit{batch}) en \textbf{Apache Spark sobre Hadoop YARN y HDFS} para auditar el 100\% del censo sin muestreo, diagnosticar focos de riesgo y entrenar un modelo predictivo con \textbf{Spark MLlib}.
+
+% --- 2. METODOLOGÍA TÉCNICA RESUMIDA ---
+\section*{\underline{2. Metodología Técnica Resumida}}
+\textbf{(a) Almacenamiento en HDFS:} Repositorio en \textbf{35 bloques de 128~MB} con \textbf{factor de replicación 2.0} (70 réplicas físicas balanceadas entre DataNodes).
+\textbf{(b) Cómputo Distribuido en YARN:} \texttt{SparkSession} (\texttt{app\_1794430508749\_0002}) con 2 ejecutores (4 cores, 8~GB RAM dedicados a workers), 200 particiones y \textit{Adaptive Query Execution} (AQE). Ingesta con esquema estricto (\texttt{StructType}) en \textbf{1,24~s}, evitando doble escaneo de HDFS.
+\textbf{(c) Transformaciones y Optimización:} Agregación multivariada por producto (T1) y join territorial con 51 estados (T2) resuelto mediante \textbf{BroadcastHashJoin}, con persistencia selectiva \texttt{MEMORY\_AND\_DISK} (115,3~MiB en RAM, reducción $>97\%$).
+
+% --- 3. RESULTADOS CLAVE ---
+\section*{\underline{3. Resultados Clave de Auditoría}}
+\textbf{1. Cumplimiento de SLA:} Latencia media nacional de respuesta de \textbf{4,45 días}, cumpliendo en promedio el límite legal, pero con marcadas brechas operativas por producto. \\
+\textbf{2. Concentración por Producto (T1):} Reportes crediticios (\textit{Credit reporting}) y tarjetas concentran más del \textbf{70\% de las quejas}, pero con compensación económica \textbf{$<$10\%} (resolución puramente administrativa). \\
+\textbf{3. Equidad Territorial (T2):} La región \textbf{Sur (South) concentra el 40,3\%} de la litigiosidad financiera, priorizándose para inspecciones presenciales de la CFPB. \\
+\textbf{4. Eficiencia del Clúster:} Procesamiento resuelto en \textbf{26,18~s} (13,75~s T1 y 12,44~s T2). Stage 30 transfirió 62,0~MiB de shuffle y Stage 19 apenas 45,5~KiB. Se certifica \textbf{Spill (Memory y Disk) = 0~B («ninguno»)}. \\
+\textbf{5. Supervisión Preventiva (MLlib):} El clasificador \texttt{LogisticRegression} alcanzó \textbf{ROC-AUC de 0,8301} y exactitud de \textbf{99,61\%} en prueba, ofreciendo excelente anticipación de moras bancarias.
+
+% --- 4. CONCLUSIONES Y RECOMENDACIONES ---
+\section*{\underline{4. Conclusiones y Recomendaciones Estratégicas}}
+\textbf{1. Priorización Regulatoria:} Focalizar brigadas de inspección de la CFPB en burós de crédito del Sur e implementar el modelo MLlib para emitir alertas tempranas automáticas ante riesgo de mora. \\
+\textbf{2. Arquitectura Cloud/On-Premise:} Mantener Spark/HDFS \textit{on-premise} para la línea base regulatoria continua (costo fijo amortizado), integrando clústeres elásticos en nube (AWS EMR / GCP Dataproc) para absorber picos extraordinarios de quejas derivados de fraudes masivos. \\[0.15em]
+\fontsize{8}{9}\selectfont\textit{*Las referencias bibliográficas en formato APA 7 y anexos técnicos se detallan en el documento de Anexos.}
+
+\end{document}
