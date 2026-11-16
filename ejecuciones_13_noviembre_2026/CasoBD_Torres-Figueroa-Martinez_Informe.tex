@@ -43,7 +43,7 @@ La \textbf{Consumer Financial Protection Bureau (CFPB)} supervisa a entidades ba
 % --- 2. METODOLOGÍA TÉCNICA RESUMIDA ---
 \section*{\underline{2. Metodología Técnica Resumida}}
 \textbf{(a) Almacenamiento en HDFS:} Repositorio en \textbf{35 bloques de 128~MB} con \textbf{factor de replicación 2.0} (70 réplicas físicas balanceadas entre DataNodes).
-\textbf{(b) Cómputo Distribuido en YARN:} \texttt{SparkSession} (\texttt{app\_1794430508749\_0002}) con 2 ejecutores (4 cores, 8~GB RAM dedicados a workers), 200 particiones y \textit{Adaptive Query Execution} (AQE). Ingesta con esquema estricto (\texttt{StructType}) en \textbf{1,24~s}, evitando doble escaneo de HDFS.
+\textbf{(b) Cómputo Distribuido en YARN:} \texttt{SparkSession} (\texttt{app\_1794430508749\_0002}) con 2 ejecutores de 4~GB de RAM y 2 cores cada uno (4 cores y 8~GB totales en workers), 200 particiones y \textit{Adaptive Query Execution} (AQE). Ingesta con esquema estricto (\texttt{StructType}) en \textbf{1,24~s}, evitando doble escaneo de HDFS.
 \textbf{(c) Transformaciones y Optimización:} Agregación multivariada por producto (T1) y join territorial con 51 estados (T2) resuelto mediante \textbf{BroadcastHashJoin}, con persistencia selectiva \texttt{MEMORY\_AND\_DISK} (115,3~MiB en RAM, reducción $>97\%$).
 
 % --- 3. RESULTADOS CLAVE ---
