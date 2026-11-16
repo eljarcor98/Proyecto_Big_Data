@@ -37,8 +37,8 @@
 \vspace{-0.9em}
 
 % --- 1. CONTEXTO Y OBJETIVO ---
-\section*{\underline{1. Contexto y Objetivo de Negocio}}
-La \textbf{Consumer Financial Protection Bureau (CFPB)} supervisa a entidades bancarias y burós de crédito en EE.~UU. para velar por el cumplimiento del plazo legal de respuesta al consumidor (SLA de 15 días). Ante el crecimiento del registro a \textbf{15.017.091 quejas ($\sim$4,6~GB)}, los sistemas tradicionales colapsaron en latencia. La consultoría implementó una arquitectura de procesamiento distribuido por lotes (\textit{batch}) en \textbf{Apache Spark sobre Hadoop YARN y HDFS} para auditar el 100\% del censo sin muestreo, diagnosticar focos de riesgo y entrenar un modelo predictivo con \textbf{Spark MLlib}.
+\section*{\underline{1. Contexto y Objetivo de la Consultoría}}
+La \textbf{Consumer Financial Protection Bureau (CFPB)} supervisa a entidades bancarias y burós de crédito en EE.~UU. para velar por el cumplimiento del plazo legal de respuesta al consumidor (máximo 15 días para emitir respuesta formal). Para esta consultoría se tomaron los datos de \textbf{15.017.091 reclamaciones ciudadanas} radicadas entre el \textbf{1 de agosto de 2023 y el 5 de noviembre de 2026}, con un volumen en disco de aproximadamente \textbf{4,6~GB}. El estudio tiene como objetivo verificar mediante arquitectura distribuida si las instituciones financieras realmente cumplen con los tiempos establecidos para responder oportunamente a sus usuarios, identificando focos de mora y concentraciones de riesgo regulatorio.
 
 % --- 2. METODOLOGÍA TÉCNICA RESUMIDA ---
 \section*{\underline{2. Metodología Técnica Resumida}}
