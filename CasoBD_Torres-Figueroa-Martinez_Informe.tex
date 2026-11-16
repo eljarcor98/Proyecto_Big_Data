@@ -37,7 +37,7 @@ La \textbf{Consumer Financial Protection Bureau (CFPB)} supervisa a entidades ba
 \section*{\underline{2. Metodología Técnica Resumida}}
 \textbf{(a) Almacenamiento Distribuido (HDFS):} Dataset en \textbf{35 bloques de 128~MB}, con replicación en 2 nodos (factor 2.0, 70 réplicas físicas) para asegurar tolerancia a fallos. \\
 \textbf{(b) Cómputo en Clúster (YARN):} 2 ejecutores con 2 cores y 4~GB de RAM (\textbf{4 cores y 8~GB totales}), garantizando solvencia. Se fijaron \textbf{200 particiones} (división de los 15 millones de datos en 200 lotes para balancear el cómputo) y \textit{Adaptive Query Execution} (AQE). \\
-\textbf{(c) Optimizaciones de Spark:} Esquema estricto (\texttt{StructType}) en 1,24~s, cruce territorial vía \textbf{BroadcastHashJoin} (sin shuffle masivo) y persistencia \texttt{MEMORY\_AND\_DISK} (115,3~MiB en RAM, $>97\%$ ahorro).
+\textbf{(c) Optimizaciones de Spark:} Esquema estricto (\texttt{StructType}) para evitar la inferencia de tipos y el doble escaneo en HDFS, cruce territorial vía \textbf{BroadcastHashJoin} (sin shuffle masivo) y persistencia \texttt{MEMORY\_AND\_DISK} (115,3~MiB en RAM, $>97\%$ ahorro).
 
 % --- 3. RESULTADOS CLAVE ---
 \section*{\underline{3. Resultados Clave de Auditoría}}
