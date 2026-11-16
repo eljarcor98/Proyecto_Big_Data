@@ -267,28 +267,18 @@
       color: var(--text-muted);
       line-height: 1.4;
       max-width: 1100px;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
     }
-    .cover-meta-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      padding-top: 28px;
-      border-top: 1.5px solid var(--border);
-    }
-    .meta-box h4 {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .meta-box p {
-      font-size: 14.5px;
+    .cover-authors {
+      font-size: 18px;
       font-weight: 600;
       color: var(--text-main);
-      line-height: 1.35;
+      margin-top: 8px;
+      letter-spacing: -0.01em;
+    }
+    .cover-authors span {
+      color: var(--accent-blue);
+      margin: 0 10px;
     }
   </style>
 </head>
@@ -303,24 +293,7 @@
       <h1 class="cover-title">Consultoría en Big Data: Auditoría Masiva de Quejas Financieras (CFPB 2023–2026)</h1>
       <p class="cover-subtitle">Procesamiento Distribuido de 15.017.091 Registros sobre Clúster Hadoop YARN y Apache Spark</p>
       
-      <div class="cover-meta-grid">
-        <div class="meta-box">
-          <h4>Entidad Contratante</h4>
-          <p>Consumer Financial Protection Bureau (CFPB) · EE. UU.</p>
-        </div>
-        <div class="meta-box">
-          <h4>Autores de la Consultoría</h4>
-          <p>Arnold Santiago Torres A.<br>Alejandro Esteban Martínez A.<br>Nicolas Felipe Figueroa S.</p>
-        </div>
-        <div class="meta-box">
-          <h4>Infraestructura Clúster</h4>
-          <p>Equipo 0068656 · Sala Deep Learning<br>1 Master + 2 Workers (YARN/HDFS)</p>
-        </div>
-        <div class="meta-box">
-          <h4>Docente Titular</h4>
-          <p>Yessica Liceth Velásquez C.<br>Grupo MABD02</p>
-        </div>
-      </div>
+      <p class="cover-authors">Arnold Santiago Torres Anzola<span>·</span>Alejandro Esteban Martínez Acosta<span>·</span>Nicolas Felipe Figueroa Salgado</p>
     </div>
     <div class="speaker-notes">
       <b>Guion del Orador:</b> "Buenas tardes profesora. Presentamos el proyecto final de consultoría para la CFPB, auditando 15 millones de quejas con Apache Spark en clúster propio de 3 nodos. La presentación está organizada estrictamente en los componentes A, B y C."
